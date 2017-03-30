@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Compiling Kotlin to Javascript &middot; Ken Gorab</title>
+
+  
+  <link rel="stylesheet" href="/css/poole.css">
+  <link rel="stylesheet" href="/css/hyde.css">
+  <link rel="stylesheet" href="/css/poole-overrides.css">
+  <link rel="stylesheet" href="/css/hyde-overrides.css">
+  <link rel="stylesheet" href="/css/hyde-x.css">
+  <link rel="stylesheet" href="/css/highlight/darcula.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Josefin+Sans">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link href="/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-96470347-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1 class="sidebar-author-name">Ken Gorab</h1>
+      
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/kengorab"><i class="fa fa-github-square"></i> Github</a><br/>
+      
+      
+      <a href="https://www.linkedin.com/in/kenneth-gorab-08862646"><i class="fa fa-linkedin-square"></i> LinkedIn</a>
+      
+      
+      
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>
+    Copyright &copy; 2017 Ken Gorab<br/>
+    <small>Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></small>
+    </p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">Compiling Kotlin to Javascript</h1>
+    <span class="post-date">Mar 28, 2017 &middot; <a href="/article/kotlin-to-javascript/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="/categories/kotlin">kotlin</a><a class="label" href="/categories/javascript">javascript</a>
+    </span>
+    
+
+<p>I really enjoy working with Kotlin. I&rsquo;ve had my eye on it since its early days, and I&rsquo;ve always viewed it as a language
+which allows me to write Java the way that I actually <em>want</em> to write it. No more unnecessary verbosity in declaring
+variables or data classes, bindings are immutable by default, string interpolation, <code>map</code>/<code>filter</code>/<code>reduce</code> without having
+to use a <code>Stream</code>&hellip; you get the idea.</p>
+
+<p>However, after the <a href="http://kotlinlang.org/docs/reference/whatsnew11.html">1.1 announcement</a> the other day (particularly the
+part about a <a href="http://kotlinlang.org/docs/reference/whatsnew11.html#javascript-backend">javascript backend</a>), it could be the
+case that Kotlin could provide not only a better way of writing Java, but a better way of writing Javascript as well.</p>
+
+<h2 id="compile-to-js-languages">Compile-to-JS Languages</h2>
+
+<p>Now the concept of a language compiling to Javascript is nothing new. We&rsquo;ve seen it before with <a href="https://www.scala-js.org">Scala.js</a>,
+<a href="https://clojurescript.org">ClojureScript</a>, <a href="http://elm-lang.org">Elm</a>, and even more adventurous projects like
+<a href="https://github.com/ghcjs/ghcjs">GCHJS</a>, which compiles Haskell to Javascript. And it makes sense too - since Javascript is
+the only thing that can run on the web (aside from <a href="http://webassembly.org">WebAssembly</a>, which is a bit too experimental yet), any
+code that we write ultimately needs to become Javascript. Hell, even <a href="http://www.typescriptlang.org">Typescript</a> and the latest
+versions of Javascript need to be compiled to the versions that browsers support.</p>
+
+<p>So there&rsquo;s really no way around it: if you&rsquo;re writing a modern web application in 2017, you&rsquo;re going to be using some compile-to-js
+language. Is Kotlin that language?</p>
+
+<p>Well, let&rsquo;s give it a shot and see how it goes.</p>
+
+<h2 id="setting-up-a-project">Setting up a Project</h2>
+
+<p>As of this writing, it&rsquo;s still pretty new so there isn&rsquo;t a wealth of resources available on the topic. By the time you read this,
+the documentation may have been updated, but I based this on the <a href="https://kotlinlang.org/docs/tutorials/javascript/getting-started-gradle/getting-started-with-gradle.html">tutorials and guides</a>
+on the Kotlin website, and I think that&rsquo;s probably the best place to start.</p>
+
+<p>If you&rsquo;re using IntelliJ IDEA (including the Community Edition, which is free), there&rsquo;s an option to create a Kotlin project with
+gradle, using a Javascript-backend. (Previously, in older versions of the Kotlin plugin, this was labeled as experimental, but as of
+the 1.1 release, that&rsquo;s no longer the case. If you still see the experimental disclaimer, you should upgrade your plugin.)</p>
+
+<p><img src="img/intellij-new-project-window.png" alt="IntelliJ IDEA New Project Window" /></p>
+
+<p>Follow the steps and you&rsquo;ll be given a totally blank project, with just a <code>settings.gradle</code> file and a <code>build.gradle</code>. Let&rsquo;s tackle
+that file first. I&rsquo;ll also note now that the finished result is
+<a href="https://github.com/kengorab/kotlin-javascript-boilerplate">available on my github</a>, so you can use it right away.</p>
+
+<h3 id="the-build-gradle-file">The build.gradle File</h3>
+
+<p>After creating the project through the IntelliJ IDEA setup screen, the <code>build.gradle</code> file should look something like this:</p>
+
+<pre><code class="language-gradle">group 'co.kenrg'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.1.1'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath &quot;org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version&quot;
+    }
+}
+
+apply plugin: 'kotlin2js'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile &quot;org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version&quot;
+}
+</code></pre>
+
+<p><em>(If you didn&rsquo;t create the project through IntelliJ, creating a new gradle project and including these changes in your <code>build.gradle</code>
+file should produce the same results.)</em></p>
+
+<p>Following along in the Kotlin tutorial, the next thing they do is add an additional step in the gradle build process, and add
+<code>build.doLast</code>. You don&rsquo;t need to do this. When the compiler generates the Javascript code from your Kotlin code, it also outputs
+a file <code>kotlin.js</code>, the Kotlin standard library in Javascript. Your compiled Javascript code will likely heavily depend on this,
+so it&rsquo;s a required dependency and must be loaded before our compiled code can work. However, by default the compiler puts it in
+a different directory than the other compiled Javascript files, and this task moves it back.</p>
+
+<p>If you don&rsquo;t want to do this, you can reference the standard library installed via <code>npm</code>/<code>yarn</code> (I recommend
+<a href="https://yarnpkg.com">yarn</a>): <code>yarn add kotlin</code>/<code>npm install --save kotlin</code>.</p>
+
+<p>The last thing to do here is to configure the compiler options. Here&rsquo;s what I use in my template project, which differs slightly from
+what&rsquo;s in the Kotlin setup guide:</p>
+
+<pre><code class="language-gradle">compileKotlin2Js {
+    kotlinOptions.outputFile = &quot;${projectDir}/build/js/module.js&quot;
+    kotlinOptions.moduleKind = &quot;umd&quot;
+    kotlinOptions.sourceMap = true
+}
+</code></pre>
+
+<p>What do all of these mean? Well, the <code>outputFile</code> tells the compiler where the compiled Javascript file should end up (<code>${projectDir}</code>
+is a variable provided by gradle, which represents the root of the project). As of this writing, the compiler does <em>not</em> support
+multiple-module builds, so all of the Kotlin code will be compiled together into one single Javascript module. This is typically
+what you&rsquo;d want to do with a tool like <a href="https://webpack.github.io">webpack</a>, because it minimizes the number of files your users&rsquo;
+browsers will have to request. Typically, project code is split into the code that you write, and a &ldquo;vendor&rdquo; file, which is a bundle
+of all of your code&rsquo;s dependencies (like React, Redux, etc).</p>
+
+<p>The <code>moduleKind</code> here is set to <code>&quot;umd&quot;</code>; the options are <code>plain</code>, <code>amd</code>, <code>commonjs</code>, and <code>umd</code>. For those not familiar with Javascript
+module loaders, here&rsquo;s a brief rundown:</p>
+
+<ul>
+<li><code>plain</code>: This is the old-school way to work with Javascript; put a bunch of <code>&lt;script&gt;</code> tags in your html file, and all of your code
+references variables on <code>window</code> (global scope).</li>
+<li><code>amd</code>: An evolution of the plain method above, it provided a way for Javascript modules to define and provide dependencies for
+other modules, and loaders like <a href="http://requirejs.org">require.js</a> could request them asynchronously as the page loaded.</li>
+<li><code>commonjs</code>: CommonJS is more well-suited for server-side Javascript, and is the module loading system used in Node.</li>
+<li><code>umd</code>: &ldquo;Universal Module Definition&rdquo;; allows modules to intelligently decide which context they&rsquo;re being loaded into (AMD,
+CommonJS, or plain) and performs the necessary initialization and dependency providing. When in doubt, use UMD.</li>
+</ul>
+
+<p>The last option is <code>sourceMap</code>, which I&rsquo;ve set to <code>true</code>. Source maps are excellent tools for debugging; since our compiled Javascript
+is generated code, it&rsquo;s not the prettiest to read, which could make debugging difficult. However, sourcemaps provide a way for
+debugging tools to reference the compiled code back to the original code (in our case, the Kotlin), so errors and breakpoints will
+appear with respect to the Kotlin, and not the generated, messy Javascript. It&rsquo;s an invaluable tool!</p>
+
+<h3 id="bring-on-the-kotlin">Bring on the Kotlin!</h3>
+
+<p>Okay, that was a lot of setup and explanation around the <code>build.gradle</code> file, let&rsquo;s get onto writing some Kotlin!</p>
+
+<p>Honestly, this is the part which I&rsquo;ll talk about the least, since goal here is to get everything up and running and not to explore
+everything that we can do just yet. Disappointing maybe, but I&rsquo;ll elaborate more in future posts.</p>
+
+<p>Since there&rsquo;s nothing in the project except for the gradle files, let&rsquo;s create a Kotlin file, using the standard project organization
+directory structure: <code>src/main/kotlin/co/kenrg/example/Main.kt</code>. You can choose whatever package name you want. Here&rsquo;s what I put in
+that file:</p>
+
+<pre><code class="language-kotlin">package co.kenrg.example
+
+fun main(args: Array&lt;String&gt;) {
+    println(&quot;Hello World!&quot;)
+}
+</code></pre>
+
+<p>Boring, I know. &ldquo;Hello World, what&rsquo;s so cool about that?&rdquo; you may be saying. Well, let&rsquo;s give this a compile and see what we get!</p>
+
+<p>In your terminal, run <code>./gradlew build</code>, and when it finishes check out the <code>build/js</code> directory. You should see a <code>module/</code> directory,
+a <code>module.js</code> file, a <code>module.js.map</code> file, and a <code>module.meta.js</code> file. For now, let&rsquo;s just concern ourselves with <code>module.js</code>, which
+is our compiled Kotlin code! You can take a look at the file, but you don&rsquo;t really need to ever know about what goes on in those
+compiled files, thanks to sourcemaps (that&rsquo;s the <code>module.js.map</code> file, in case you were wondering).</p>
+
+<h2 id="running-our-compiled-javascript">Running our Compiled Javascript</h2>
+
+<p>Now that we&rsquo;ve built our Kotlin and have compiled Javascript, let&rsquo;s run it! If you followed my earlier instruction to
+<code>yarn add kotlin</code>/<code>npm install --save kotlin</code> (you may have needed to do a <code>yarn init</code>/<code>npm init</code> first), then we&rsquo;re ready to run
+our compiled Javascript against Node!</p>
+
+<p>In your terminal, run <code>node build/js/module.js</code>, and you should see the output &ldquo;Hello World&rdquo;. Awesome, we&rsquo;ve compiled our Kotlin code
+to Javascript, and are running against Node server-side. Take a moment and think about how cool that is!</p>
+
+<p>But what about running in the browser?</p>
+
+<p>Well, if you remember, we&rsquo;ve told the compiler that we want to compile into the UMD format, so running in the browser shouldn&rsquo;t be too
+difficult. Let&rsquo;s make an <code>index.html</code> file in the root of our project:</p>
+
+<pre><code class="language-html">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Kotlin to Javascript&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script src=&quot;node_modules/kotlin/kotlin.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;build/js/module.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p><em>The <code>index.html</code> file in my template project is a little more decorated than this; this is barebones enough to see some output.</em></p>
+
+<p>You&rsquo;ll notice that there are two script tags, one for the standard library (which <code>npm</code>/<code>yarn</code> has installed into the <code>node_modules</code>
+directory for us), and another for the Javascript assets we&rsquo;ve built with <code>./gradlew build</code>. This is the old-school. &ldquo;plain&rdquo; way of
+handling Javascript dependencies - files with dependencies on other files should be included after those dependent files. (You can
+imagine how difficult this can get to manage, which is why module loading solutions like AMD, CommonJS, and UMD were developed).</p>
+
+<p>Now let&rsquo;s open up this file in your web browser of choice (you can just open it up by dragging the file into a new Chrome window, using
+the <code>file://</code> protocol linking to the file&rsquo;s patch on your filesystem, or by running <code>python -m SimpleHTTPServer</code> at the project
+root and hitting <code>http://localhost:8000</code>).</p>
+
+<p>If we look in the console, we see our &ldquo;Hello World!&rdquo; message! Awesome, so we&rsquo;ve run the same Javascript code on the server-side using
+Node, and in the browser. Who even cares that it&rsquo;s just a simple Hello World app&hellip; ship it!</p>
+
+<h2 id="okay-that-s-cool-but">Okay that&rsquo;s cool, but&hellip;</h2>
+
+<p>Yeah, I know, a Hello World application isn&rsquo;t very awe-inspiring.</p>
+
+<p>But that wasn&rsquo;t my intention with this. There&rsquo;s no point in writing a full-fledged React application in Kotlin to compile to Javascript
+if you can&rsquo;t the Javascript-compilation step working correctly first. The cool stuff (not that this isn&rsquo;t cool, mind you!) can come
+later now that the groundwork is in place. Everything needs a foundation on which to build!</p>
+
+<h2 id="what-s-next">What&rsquo;s Next?</h2>
+
+<p>Well, starting from here we&rsquo;ve gotten Kotlin to compile to Javascript that can execute in either the browser or in Node&hellip; where do
+we go next? Well, you should definitely check out the <a href="https://github.com/Kotlin/kotlinx.html">kotlinx.html</a> library, which provides
+an idiomatic-Kotlin way of writing HTML. Also, <a href="https://youtu.be/QQKdFFRqamg?t=21m8s">showcased a bit</a> during the Kotlin 1.1 Event
+last week was a React Kotlin wrapper library. When I asked later at the Q&amp;A session about its release date, Andrey replied that it&rsquo;s
+&ldquo;coming soon&rdquo;, so I&rsquo;ll definitely be on the lookout for that!</p>
+
+<p>Aside from that, I&rsquo;m going to continue to explore Kotlin&rsquo;s Javascript build target, delving into how I can call existing libraries
+(like lodash, perhaps) from Kotlin as well as the opposite, calling compiled-to-javascript Kotlin from existing Javascript code. I&rsquo;ll
+try to record my findings and maybe publish another post about that soon.</p>
+
+<p>I encourage you to look at the <a href="https://github.com/kengorab/kotlin-javascript-boilerplate">code included in this article</a>, and maybe
+even fork it for your own project. Let me know if you have any suggestions for it as well. I&rsquo;ll probably add additional branches/tags
+for other investigations I do in there, but I&rsquo;ll leave <code>master</code> in the state it&rsquo;s in as of this post.</p>
+
+<h2 id="should-i-use-this-for-my-next-project">Should I use this for my next project?</h2>
+
+<p>Probably not. It&rsquo;s still very new, the documentation is lacking, and there are much more mature alternatives out there at the moment.
+Don&rsquo;t get me wrong, it&rsquo;s definitely a project I have my eyes on, but there&rsquo;s no way it&rsquo;s going to compete with Scala.js right out of
+the gate, or Clojurescript with <a href="https://reagent-project.github.io">reagent</a> and <a href="https://github.com/Day8/re-frame">re-frame</a>. The
+libraries, adoption, and interest just aren&rsquo;t high enough yet.</p>
+
+<p>But definitely stay tuned to the project, I anticipate big things from the Kotlin team.</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "kenrg-blog";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "kenrg-blog";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
