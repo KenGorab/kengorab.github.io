@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Writing Snake in Javascript with Kotlin: Part 0 &middot; Ken Gorab</title>
+
+  
+  <link rel="stylesheet" href="http://kenrg.co/css/poole.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/hyde.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/hyde-x.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/highlight/darcula.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Josefin+Sans">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+
+  
+  
+  
+  <link rel="apple-touch-icon" sizes="57x57" href="http://kenrg.co/favicons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="http://kenrg.co/favicons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="http://kenrg.co/favicons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="http://kenrg.co/favicons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="http://kenrg.co/favicons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="http://kenrg.co/favicons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="http://kenrg.co/favicons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="http://kenrg.co/favicons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://kenrg.co/favicons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="http://kenrg.co/favicons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://kenrg.co/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="http://kenrg.co/favicons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://kenrg.co/favicons/favicon-16x16.png">
+  <link rel="manifest" href="http://kenrg.co/favicons/manifest.json">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="kotlin,kotlinx,kotlinx.html,kotlin 1.1,javascript,tutorial,snake,game">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-96470347-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1 class="sidebar-author-name">Ken Gorab</h1>
+      
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://kenrg.co/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://kenrg.co/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/kengorab"><i class="fa fa-github-square"></i> Github</a><br/>
+      
+      
+      <a href="https://www.linkedin.com/in/kenneth-gorab-08862646"><i class="fa fa-linkedin-square"></i> LinkedIn</a>
+      
+      
+      
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>
+    Copyright &copy; 2017 Ken Gorab<br/>
+    <small>Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></small>
+    </p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">Writing Snake in Javascript with Kotlin: Part 0</h1>
+    <span class="post-date">Apr 7, 2017 &middot; <a href="http://kenrg.co/article/writing-snake-in-kotlin-js-0/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://kenrg.co/categories/kotlin">kotlin</a><a class="label" href="http://kenrg.co/categories/kotlinx">kotlinx</a><a class="label" href="http://kenrg.co/categories/javascript">javascript</a>
+    </span>
+    
+
+<p>Continuing from my <a href="/article/kotlin-to-javascript/">previous post about Kotlin</a> and its newly-added Javascript build target,
+I wanted to play around with the (also recently released) <a href="https://github.com/Kotlin/kotlinx.html">kotlinx.html</a> library. If
+you&rsquo;ve used <a href="https://github.com/Kotlin/anko">anko</a> in the past (a Kotlin library for defining views in Android, among other
+utilities), <code>kotlinx.html</code> is essentially the same idea; it provides a nice &ldquo;DSL&rdquo; in Kotlin for creating HTML elements.</p>
+
+<p>I put &ldquo;DSL&rdquo; in quotes, because while it may <em>look</em> like some other language, it <em>is</em> still just normal Kotlin code, albeit taking
+advantage of language features like <a href="https://kotlinlang.org/docs/reference/lambdas.html#function-literals-with-receiver">function literals with receivers</a>.</p>
+
+<p>So, using Kotlin and Kotlinx.html, let&rsquo;s try to write the game Snake and run it in the browser. All of the code will be available on
+my github, and there will be a tag for steps along the way, in case you wanted to try it for yourself.</p>
+
+<p>This is going to be a multi-part article, so let&rsquo;s get started! 🐍🐍🐍</p>
+
+<h1 id="step-0-project-setup">Step 0: Project Setup</h1>
+
+<p>I&rsquo;m going to start with the <a href="https://github.com/kengorab/kotlin-javascript-boilerplate">kotlin-js-boilerplate</a> that we built up in my
+previous post about Kotlin and Javascript, so you can fork that if you want to follow along.</p>
+
+<p>After copying the template, renaming the project in the <code>settings.gradle</code> file, and clearing out the README (we&rsquo;ll fill it in later),
+I replaced the <code>index.html</code> file with this:</p>
+
+<pre><code class="language-html">&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;🐍 Snake&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css&quot;&gt;
+&lt;/head&gt;
+&lt;body class=&quot;container&quot;&gt;
+&lt;h1&gt;🐍 Snake&lt;/h1&gt;
+
+&lt;script src=&quot;node_modules/kotlin/kotlin.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;build/js/module.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>This is nearly the same as it was in the boilerplate, just removing some unnecessary html. The same scripts get pulled in
+(if you&rsquo;re unsure what these javascript files are, or where they come from, you should read through <a href="http://localhost:1313/article/kotlin-to-javascript/">my previous post</a>.</p>
+
+<p>By serving up the root project using any method you like (I like <code>python -m SimpleHTTPServer</code> since it&rsquo;s available by default on any
+OS with python installed), you&rsquo;ll see a very boring page with an <code>h1</code> tag, and nothing else.  As of now, the <code>Main.kt</code> file still just
+prints <code>'Hello World!'</code> to the brower console, so you should see that too. Remember to do an <code>npm install</code>/<code>yarn</code> before running,
+since the template project pulls in the kotlin-js standard library via npm.</p>
+
+<p>But we didn&rsquo;t come here to write HTML, we came here to write Kotlin!</p>
+
+<h2 id="using-kotlinx-html">Using kotlinx.html</h2>
+
+<p>Head over to your <code>build.gradle</code> file. You should see the boilerplate/template stuff, applying the <code>kotlin2js</code> plugin, and pulling in
+the kotlin-js standard lib. Change the <code>dependencies</code> section to include the <code>kotlinx-html-js</code> dependency:</p>
+
+<pre><code class="language-gradle">dependencies {
+  compile &quot;org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version&quot;
+  compile 'org.jetbrains.kotlinx:kotlinx-html-js:0.6.3'
+}
+</code></pre>
+
+<p><em>Note that the version may be different by the time of your reading; you can see what the latest version is by checking the
+<a href="https://github.com/Kotlin/kotlinx.html/releases">releases</a> page on the kotlinx.html github.</em></p>
+
+<p>In order to install this dependency, we need to tell gradle where it can be found online, since it&rsquo;s not in the maven central repo.
+Change your <code>repositories</code> section to look like this:</p>
+
+<pre><code class="language-gradle">repositories {
+  mavenCentral()
+  jcenter()
+}
+</code></pre>
+
+<p><em>Note that this is the top-level <code>repositories</code> section, not the one nested under <code>buildscript</code> at the top.</em></p>
+
+<p>Now, let&rsquo;s head back to our <code>index.html</code> file, and remove the line with the <code>h1</code> tag. Refreshing our browser tab that loaded that file
+should result in a blank page (duh).</p>
+
+<p>Let&rsquo;s change our <code>Main.kt</code> file to render this line, using the <code>kotlinx.html</code> library. Here&rsquo;s what it should look like:</p>
+
+<pre><code class="language-kotlin">package co.kenrg.snake
+
+import kotlinx.html.dom.append
+import kotlinx.html.js.h1
+import kotlin.browser.document
+
+fun main(args: Array&lt;String&gt;) {
+    document.body?.append {
+        h1 { +&quot;🐍 Snake&quot; }
+    }
+}
+</code></pre>
+
+<p><em>If you&rsquo;re confused what exactly this is doing here (and what that plus sign is doing before the String) you&rsquo;re not alone. I was
+mystified by this library at first too. I explain what&rsquo;s going on here <a href="#how-does-kotlinx-html-work">further</a> down the page,
+after we get it working.</em></p>
+
+<p>Run <code>./gradlew build</code>, and it should complete successfully, resulting in the generation of the <code>module.js</code> file within the
+<code>build/js</code> directory (there are other files generated in there too, see my previous post for more info on that).</p>
+
+<p>Our <code>index.html</code> file is already set up to load the <code>build/js/module.js</code> Javascript file, as well as the kotlin-js standard library
+from <code>node_modules</code> (if you haven&rsquo;t run a <code>npm install</code>/<code>yarn</code> yet, do it now), so let&rsquo;s refresh the page.</p>
+
+<p>There should be an error that appears in the browser console, saying something resembling:</p>
+
+<pre><code>module.js:11 Uncaught Error: Error loading module 'module'. Its dependency 'kotlinx-html-js' was not found. Please, check whether 'kotlinx-html-js' is loaded prior to 'module'.
+</code></pre>
+
+<p>This is because our module depends not only on the kotlin-js standard library, but on the kotlinx-html-js library as well. In my last
+post when I built up the boilerplate project, <a href="/article/kotlin-to-javascript/#the-build-gradle-file">I mentioned</a>
+how the kotlin-js standard library could either be extracted from the kotlin-stdlib-js dependency jar using a <code>build.doLast</code> gradle
+task, or by adding a <code>package.json</code> and installing it as a node dependency, since the standard lib was installable as an npm package.
+This is unfortunately not the case (at least not yet) for the kotlinx-html-js library. So we&rsquo;ll need to add that <code>build.doLast</code> step
+after all.</p>
+
+<h2 id="loading-the-kotlinx-html-js-library">Loading the kotlinx-html-js library</h2>
+
+<p>In the Kotlin-to-Javascript setup instructions, JetBrains mentions a <code>build.doLast</code> step that you can add to your <code>build.gradle</code> file
+in order to extract the standard lib from a jar. Since we&rsquo;ll need to do that for the kotlinx-html-js library anyway (and this task
+extracts all <code>.js</code> files from jars on the classpath) we&rsquo;ll no longer need to reference the kotlin-js standard library from the
+<code>node_modules</code> directory. So we can go ahead and delete <code>node_modules</code> and the <code>package.json</code>, and add this to your <code>build.gradle</code>:</p>
+
+<pre><code class="language-gradle">build.doLast {
+  configurations.compile.each { File file -&gt;
+    copy {
+      includeEmptyDirs = false
+
+      from zipTree(file.absolutePath)
+      into &quot;${projectDir}/build/js&quot;
+      include { fileTreeElement -&gt;
+        def path = fileTreeElement.path
+        path.endsWith(&quot;.js&quot;) &amp;&amp; (path.startsWith(&quot;META-INF/resources/&quot;) || !path.startsWith(&quot;META-INF/&quot;))
+      }
+    }
+  }
+}
+</code></pre>
+
+<p>Let&rsquo;s run a <code>./gradlew build</code> and see now that there are additional files generated in the <code>build/js</code> directory, including: <code>kotlin.js</code> and <code>kotlinx-html-js.js</code>. Update the <code>index.html</code> file to include the following script tags instead of what was previously there:</p>
+
+<pre><code class="language-html">&lt;script src=&quot;build/js/kotlin.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;build/js/kotlinx-html-js.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;build/js/module.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+
+<p>Refresh the page and you should see our <code>h1</code> tag appear! Awesome, we&rsquo;ve generated some DOM elements using Kotlin, compiled to
+Javascript! We&rsquo;ve paved the way for the remainder of the project.</p>
+
+<h2 id="how-does-kotlinx-html-work">How does kotlinx-html work?</h2>
+
+<p><em>Note: This code will not be included in the github repo for this project</em></p>
+
+<p>This is what our main function looks like in <code>Main.kt</code>:</p>
+
+<pre><code class="language-kotlin">package co.kenrg.snake
+
+import kotlinx.html.dom.append
+import kotlinx.html.js.h1
+import kotlin.browser.document
+
+fun main(args: Array&lt;String&gt;) {
+    document.body?.append {
+        h1 { +&quot;🐍 Snake&quot; }
+    }
+}
+</code></pre>
+
+<p>The first thing we do is get a handle on <code>document.body</code>. This corresponds to the HTML node created by the <code>&lt;body&gt;</code> tag. In our
+<code>index.html</code> file, this is empty and has a class of <code>'container'</code>. The <code>.append</code> function is an <a href="https://kotlinlang.org/docs/reference/extensions.html#extension-functions">extension function</a>
+on the <code>Node</code> class, of which <code>document.body</code> is an instance. Actually, it is a nullable instance, which is why we need the
+null-safe operator (<code>?.</code>) when calling <code>apply</code>. The <code>apply</code> function has the following signature:</p>
+
+<pre><code class="language-kotlin">fun Node.append(block : TagConsumer&lt;HTMLElement&gt;.() -&gt; Unit) : List&lt;HTMLElement&gt;
+</code></pre>
+
+<p>The <code>block</code> parameter is a function/closure with a <a href="https://kotlinlang.org/docs/reference/lambdas.html#function-literals-with-receiver">receiver</a>
+of <code>TagConsumer&lt;HTMLElement&gt;</code>, which means that any code in that block will be executed as if it were an extension function on
+<code>TagConsumer&lt;HTMLElement&gt;</code>. This is how the kotlinx-html library achieves its DSL-like syntax.</p>
+
+<p>Within the function/closure/block (I&rsquo;ve seen it called all three) we call the <code>h1</code> function, which has the following signature:</p>
+
+<pre><code class="language-kotlin">fun TagConsumer&lt;HTMLElement&gt;.h1(classes : String? = null, block : H1.() -&gt; Unit = {}) : HTMLHeadingElement
+</code></pre>
+
+<p>As expected, since it&rsquo;s executed within the block passed to <code>body.apply</code>, the <code>h1</code> function is a function on <code>TagConsumer&lt;HtmlElement&gt;</code>
+(an extension function to be precise, which is how all of these functions seem to be implemented). We could have
+equivalently written our <code>main</code> function as follows, with the same exact result:</p>
+
+<pre><code class="language-kotlin">fun main(args: Array&lt;String&gt;) {
+    document.body?.append {
+        this.h1 { +&quot;🐍 Snake&quot; }
+    }
+}
+</code></pre>
+
+<p>where the <code>this</code> keyword in <code>this.h1</code> refers to the <code>TagConsumer&lt;HTMLElement&gt;</code> instance that the block passed to <code>.apply</code> will be
+executing within. This is definitely on the more confusing side, but I encourage you to read through the Kotlin documentation for
+<a href="https://kotlinlang.org/docs/reference/extensions.html#extension-functions">extension functions</a> and <a href="https://kotlinlang.org/docs/reference/lambdas.html#function-literals-with-receiver">function literals with receiver</a>
+and it should help. Also, playing around with the <a href="https://try.kotlinlang.org/#/Examples/Longer%20examples/HTML%20Builder/HTML%20Builder.kt">HTML Builder example</a>
+on the Kotlin playground page will help a lot too (it definitely helped me).</p>
+
+<p>The only other weird thing is the <code>+&quot;🐍 Snake&quot;</code> line within the <code>h1</code> block.</p>
+
+<p>The HTML Builder example linked above differs slightly from the implementation of the kotlinx.html library, but it can definitely
+provide us some insight into what&rsquo;s happening here. In that example, we see this definition in the <code>TagWithText</code> class:</p>
+
+<pre><code class="language-kotlin">operator fun String.unaryPlus() {
+  children.add(TextElement(this))
+}
+</code></pre>
+
+<p>Kotlin provides us the ability to <a href="https://kotlinlang.org/docs/reference/operator-overloading.html">overload operators</a>, which means
+we can define custom implementations for the standard operators. In this case, the unary plus operator (the counterpart to the unary
+minus operator, which allows us to define negative numbers) is being overridden to mean &ldquo;set the text content of this element&rdquo;. This,
+in my opinion, is the most unintuitive part of the kotlinx.html library, but it&rsquo;s a nice shortcut for defining the text content of
+a DOM node. There is another (possibly less-idiomatic, but also possibly clearer) way of doing it, but first I need to show how the
+library handles setting a node&rsquo;s attributes, and how to nest child nodes.</p>
+
+<p>The <code>block</code> parameter that&rsquo;s passed into the <code>h1</code> function executes within the context of an instance of the <code>H1</code> class,
+meaning that setting the <code>id</code> or the <code>tabIndex</code> properties of an <code>h1</code> is done like:</p>
+
+<pre><code class="language-kotlin">h1 {
+  id = &quot;some-id&quot;
+  tabIndex = &quot;0&quot;
+}
+</code></pre>
+
+<p><em>All of the attributes have type <code>String</code>, which corresponds well to the DOM, since all attributes are passed as strings, but isn&rsquo;t
+extraordinarily type-safe, since <code>tabIndex</code> should probably be an <code>Int</code>. I have no inside sources or anything, but I&rsquo;d expect this
+to change over time as the library gets more mature.</em></p>
+
+<p>Here is some pseudo-code to illustrate what&rsquo;s happening here with this block:</p>
+
+<pre><code>val h1 = H1()
+h1.id = &quot;some-id&quot;
+h1.tabIndex = &quot;0&quot;
+</code></pre>
+
+<p>Nested DOM nodes can be defined in this way too, by adding code to the block passed to the parent&rsquo;s function. For example, creating
+a div with a span and a button inside of it would look like:</p>
+
+<pre><code class="language-kotlin">div {
+  span { +&quot;Some label&quot; }
+  button { 
+    +&quot;Click me&quot;
+    onClickFunction = { event -&gt; println(&quot;Button clicked!&quot;) } 
+  }
+}
+</code></pre>
+
+<p>Here is some pseudo-code to illustrate what&rsquo;s happening here with this block:</p>
+
+<pre><code>val div = DIV()
+
+val span = SPAN()
+span.add(TextElement(&quot;Some label&quot;))
+div.addChild(span)
+
+val button = BUTTON()
+button.add(TextElement(&quot;Click me&quot;))
+button.onClickFunction = { event -&gt; println(&quot;Button clicked!&quot;) }
+div.addChild(button)
+</code></pre>
+
+<p>This isn&rsquo;t at all what the underlying Kotlin code is doing (or at least, not <em>all</em> that it&rsquo;s doing), but it provides a good way to
+conceptualize this &ldquo;DSL&rdquo;.</p>
+
+<p>I&rsquo;m still using the <code>+</code>/<code>unaryPlus</code> operator in that example above, but now that we understand nesting within these blocks, we could
+substitute it with a call to the <code>text</code> function:</p>
+
+<pre><code class="language-kotlin">div {
+  span { text(&quot;Some label&quot;) }
+  button { 
+    text(&quot;Click me&quot;)
+    onClickFunction = { event -&gt; println(&quot;Button clicked!&quot;) } 
+  }
+}
+</code></pre>
+
+<p>I think it&rsquo;s clearer what the intent is when we use the <code>text</code> function, but it is slightly more verbose, especially when considering
+that setting the text content of a node is one of the most common use cases. It may seem unintuitive at first, but the unary plus
+operator does quickly become a useful shortcut.</p>
+
+<h2 id="to-be-continued">To be continued&hellip;</h2>
+
+<p>I don&rsquo;t want these articles to be too long, and I think this is a good stopping point for now, so we&rsquo;ll continue this in the next
+one (Part 1). All of the code is <a href="https://github.com/kengorab/kotlin-js-snake/tree/step-0">available on my github</a>, under the tag
+<code>step-0</code>. There will be future tags for future articles. Stay tuned for more!</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "kenrg-blog";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "kenrg-blog";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://kenrg.co/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+

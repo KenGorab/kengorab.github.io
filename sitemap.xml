@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kenrg.co/article/writing-snake-in-kotlin-js-0/</loc>
+    <lastmod>2017-04-07T23:29:04-04:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://kenrg.co/article/kotlin-to-javascript/</loc>
     <lastmod>2017-03-28T20:15:46-04:00</lastmod>
   </url>
@@ -12,13 +17,13 @@
   
   <url>
     <loc>http://kenrg.co/article/</loc>
-    <lastmod>2017-03-28T20:15:46-04:00</lastmod>
+    <lastmod>2017-04-07T23:29:04-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://kenrg.co/</loc>
-    <lastmod>2017-03-28T20:15:46-04:00</lastmod>
+    <lastmod>2017-04-07T23:29:04-04:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -29,13 +34,19 @@
   
   <url>
     <loc>http://kenrg.co/categories/javascript/</loc>
-    <lastmod>2017-03-28T20:15:46-04:00</lastmod>
+    <lastmod>2017-04-07T23:29:04-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://kenrg.co/categories/kotlin/</loc>
-    <lastmod>2017-03-28T20:15:46-04:00</lastmod>
+    <lastmod>2017-04-07T23:29:04-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://kenrg.co/categories/kotlinx/</loc>
+    <lastmod>2017-04-07T23:29:04-04:00</lastmod>
     <priority>0</priority>
   </url>
   

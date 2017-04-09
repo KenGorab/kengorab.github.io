@@ -6,8 +6,302 @@
     <description>Recent content in Articles on Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 28 Mar 2017 20:15:46 -0400</lastBuildDate>
+    <lastBuildDate>Fri, 07 Apr 2017 23:29:04 -0400</lastBuildDate>
     <atom:link href="http://kenrg.co/article/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Writing Snake in Javascript with Kotlin: Part 0</title>
+      <link>http://kenrg.co/article/writing-snake-in-kotlin-js-0/</link>
+      <pubDate>Fri, 07 Apr 2017 23:29:04 -0400</pubDate>
+      
+      <guid>http://kenrg.co/article/writing-snake-in-kotlin-js-0/</guid>
+      <description>
+
+&lt;p&gt;Continuing from my &lt;a href=&#34;http://kenrg.co/article/kotlin-to-javascript/&#34;&gt;previous post about Kotlin&lt;/a&gt; and its newly-added Javascript build target,
+I wanted to play around with the (also recently released) &lt;a href=&#34;https://github.com/Kotlin/kotlinx.html&#34;&gt;kotlinx.html&lt;/a&gt; library. If
+you&amp;rsquo;ve used &lt;a href=&#34;https://github.com/Kotlin/anko&#34;&gt;anko&lt;/a&gt; in the past (a Kotlin library for defining views in Android, among other
+utilities), &lt;code&gt;kotlinx.html&lt;/code&gt; is essentially the same idea; it provides a nice &amp;ldquo;DSL&amp;rdquo; in Kotlin for creating HTML elements.&lt;/p&gt;
+
+&lt;p&gt;I put &amp;ldquo;DSL&amp;rdquo; in quotes, because while it may &lt;em&gt;look&lt;/em&gt; like some other language, it &lt;em&gt;is&lt;/em&gt; still just normal Kotlin code, albeit taking
+advantage of language features like &lt;a href=&#34;https://kotlinlang.org/docs/reference/lambdas.html#function-literals-with-receiver&#34;&gt;function literals with receivers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;So, using Kotlin and Kotlinx.html, let&amp;rsquo;s try to write the game Snake and run it in the browser. All of the code will be available on
+my github, and there will be a tag for steps along the way, in case you wanted to try it for yourself.&lt;/p&gt;
+
+&lt;p&gt;This is going to be a multi-part article, so let&amp;rsquo;s get started! 🐍🐍🐍&lt;/p&gt;
+
+&lt;h1 id=&#34;step-0-project-setup&#34;&gt;Step 0: Project Setup&lt;/h1&gt;
+
+&lt;p&gt;I&amp;rsquo;m going to start with the &lt;a href=&#34;https://github.com/kengorab/kotlin-javascript-boilerplate&#34;&gt;kotlin-js-boilerplate&lt;/a&gt; that we built up in my
+previous post about Kotlin and Javascript, so you can fork that if you want to follow along.&lt;/p&gt;
+
+&lt;p&gt;After copying the template, renaming the project in the &lt;code&gt;settings.gradle&lt;/code&gt; file, and clearing out the README (we&amp;rsquo;ll fill it in later),
+I replaced the &lt;code&gt;index.html&lt;/code&gt; file with this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;html&amp;gt;
+&amp;lt;head&amp;gt;
+    &amp;lt;title&amp;gt;🐍 Snake&amp;lt;/title&amp;gt;
+    &amp;lt;link rel=&amp;quot;stylesheet&amp;quot; href=&amp;quot;https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css&amp;quot;&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body class=&amp;quot;container&amp;quot;&amp;gt;
+&amp;lt;h1&amp;gt;🐍 Snake&amp;lt;/h1&amp;gt;
+
+&amp;lt;script src=&amp;quot;node_modules/kotlin/kotlin.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+&amp;lt;script src=&amp;quot;build/js/module.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is nearly the same as it was in the boilerplate, just removing some unnecessary html. The same scripts get pulled in
+(if you&amp;rsquo;re unsure what these javascript files are, or where they come from, you should read through &lt;a href=&#34;http://localhost:1313/article/kotlin-to-javascript/&#34;&gt;my previous post&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;By serving up the root project using any method you like (I like &lt;code&gt;python -m SimpleHTTPServer&lt;/code&gt; since it&amp;rsquo;s available by default on any
+OS with python installed), you&amp;rsquo;ll see a very boring page with an &lt;code&gt;h1&lt;/code&gt; tag, and nothing else.  As of now, the &lt;code&gt;Main.kt&lt;/code&gt; file still just
+prints &lt;code&gt;&#39;Hello World!&#39;&lt;/code&gt; to the brower console, so you should see that too. Remember to do an &lt;code&gt;npm install&lt;/code&gt;/&lt;code&gt;yarn&lt;/code&gt; before running,
+since the template project pulls in the kotlin-js standard library via npm.&lt;/p&gt;
+
+&lt;p&gt;But we didn&amp;rsquo;t come here to write HTML, we came here to write Kotlin!&lt;/p&gt;
+
+&lt;h2 id=&#34;using-kotlinx-html&#34;&gt;Using kotlinx.html&lt;/h2&gt;
+
+&lt;p&gt;Head over to your &lt;code&gt;build.gradle&lt;/code&gt; file. You should see the boilerplate/template stuff, applying the &lt;code&gt;kotlin2js&lt;/code&gt; plugin, and pulling in
+the kotlin-js standard lib. Change the &lt;code&gt;dependencies&lt;/code&gt; section to include the &lt;code&gt;kotlinx-html-js&lt;/code&gt; dependency:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;dependencies {
+  compile &amp;quot;org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version&amp;quot;
+  compile &#39;org.jetbrains.kotlinx:kotlinx-html-js:0.6.3&#39;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;Note that the version may be different by the time of your reading; you can see what the latest version is by checking the
+&lt;a href=&#34;https://github.com/Kotlin/kotlinx.html/releases&#34;&gt;releases&lt;/a&gt; page on the kotlinx.html github.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;In order to install this dependency, we need to tell gradle where it can be found online, since it&amp;rsquo;s not in the maven central repo.
+Change your &lt;code&gt;repositories&lt;/code&gt; section to look like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;repositories {
+  mavenCentral()
+  jcenter()
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;Note that this is the top-level &lt;code&gt;repositories&lt;/code&gt; section, not the one nested under &lt;code&gt;buildscript&lt;/code&gt; at the top.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Now, let&amp;rsquo;s head back to our &lt;code&gt;index.html&lt;/code&gt; file, and remove the line with the &lt;code&gt;h1&lt;/code&gt; tag. Refreshing our browser tab that loaded that file
+should result in a blank page (duh).&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s change our &lt;code&gt;Main.kt&lt;/code&gt; file to render this line, using the &lt;code&gt;kotlinx.html&lt;/code&gt; library. Here&amp;rsquo;s what it should look like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;package co.kenrg.snake
+
+import kotlinx.html.dom.append
+import kotlinx.html.js.h1
+import kotlin.browser.document
+
+fun main(args: Array&amp;lt;String&amp;gt;) {
+    document.body?.append {
+        h1 { +&amp;quot;🐍 Snake&amp;quot; }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;If you&amp;rsquo;re confused what exactly this is doing here (and what that plus sign is doing before the String) you&amp;rsquo;re not alone. I was
+mystified by this library at first too. I explain what&amp;rsquo;s going on here &lt;a href=&#34;#how-does-kotlinx-html-work&#34;&gt;further&lt;/a&gt; down the page,
+after we get it working.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Run &lt;code&gt;./gradlew build&lt;/code&gt;, and it should complete successfully, resulting in the generation of the &lt;code&gt;module.js&lt;/code&gt; file within the
+&lt;code&gt;build/js&lt;/code&gt; directory (there are other files generated in there too, see my previous post for more info on that).&lt;/p&gt;
+
+&lt;p&gt;Our &lt;code&gt;index.html&lt;/code&gt; file is already set up to load the &lt;code&gt;build/js/module.js&lt;/code&gt; Javascript file, as well as the kotlin-js standard library
+from &lt;code&gt;node_modules&lt;/code&gt; (if you haven&amp;rsquo;t run a &lt;code&gt;npm install&lt;/code&gt;/&lt;code&gt;yarn&lt;/code&gt; yet, do it now), so let&amp;rsquo;s refresh the page.&lt;/p&gt;
+
+&lt;p&gt;There should be an error that appears in the browser console, saying something resembling:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;module.js:11 Uncaught Error: Error loading module &#39;module&#39;. Its dependency &#39;kotlinx-html-js&#39; was not found. Please, check whether &#39;kotlinx-html-js&#39; is loaded prior to &#39;module&#39;.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is because our module depends not only on the kotlin-js standard library, but on the kotlinx-html-js library as well. In my last
+post when I built up the boilerplate project, &lt;a href=&#34;http://kenrg.co/article/kotlin-to-javascript/#the-build-gradle-file&#34;&gt;I mentioned&lt;/a&gt;
+how the kotlin-js standard library could either be extracted from the kotlin-stdlib-js dependency jar using a &lt;code&gt;build.doLast&lt;/code&gt; gradle
+task, or by adding a &lt;code&gt;package.json&lt;/code&gt; and installing it as a node dependency, since the standard lib was installable as an npm package.
+This is unfortunately not the case (at least not yet) for the kotlinx-html-js library. So we&amp;rsquo;ll need to add that &lt;code&gt;build.doLast&lt;/code&gt; step
+after all.&lt;/p&gt;
+
+&lt;h2 id=&#34;loading-the-kotlinx-html-js-library&#34;&gt;Loading the kotlinx-html-js library&lt;/h2&gt;
+
+&lt;p&gt;In the Kotlin-to-Javascript setup instructions, JetBrains mentions a &lt;code&gt;build.doLast&lt;/code&gt; step that you can add to your &lt;code&gt;build.gradle&lt;/code&gt; file
+in order to extract the standard lib from a jar. Since we&amp;rsquo;ll need to do that for the kotlinx-html-js library anyway (and this task
+extracts all &lt;code&gt;.js&lt;/code&gt; files from jars on the classpath) we&amp;rsquo;ll no longer need to reference the kotlin-js standard library from the
+&lt;code&gt;node_modules&lt;/code&gt; directory. So we can go ahead and delete &lt;code&gt;node_modules&lt;/code&gt; and the &lt;code&gt;package.json&lt;/code&gt;, and add this to your &lt;code&gt;build.gradle&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-gradle&#34;&gt;build.doLast {
+  configurations.compile.each { File file -&amp;gt;
+    copy {
+      includeEmptyDirs = false
+
+      from zipTree(file.absolutePath)
+      into &amp;quot;${projectDir}/build/js&amp;quot;
+      include { fileTreeElement -&amp;gt;
+        def path = fileTreeElement.path
+        path.endsWith(&amp;quot;.js&amp;quot;) &amp;amp;&amp;amp; (path.startsWith(&amp;quot;META-INF/resources/&amp;quot;) || !path.startsWith(&amp;quot;META-INF/&amp;quot;))
+      }
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s run a &lt;code&gt;./gradlew build&lt;/code&gt; and see now that there are additional files generated in the &lt;code&gt;build/js&lt;/code&gt; directory, including: &lt;code&gt;kotlin.js&lt;/code&gt; and &lt;code&gt;kotlinx-html-js.js&lt;/code&gt;. Update the &lt;code&gt;index.html&lt;/code&gt; file to include the following script tags instead of what was previously there:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;script src=&amp;quot;build/js/kotlin.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+&amp;lt;script src=&amp;quot;build/js/kotlinx-html-js.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+&amp;lt;script src=&amp;quot;build/js/module.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Refresh the page and you should see our &lt;code&gt;h1&lt;/code&gt; tag appear! Awesome, we&amp;rsquo;ve generated some DOM elements using Kotlin, compiled to
+Javascript! We&amp;rsquo;ve paved the way for the remainder of the project.&lt;/p&gt;
+
+&lt;h2 id=&#34;how-does-kotlinx-html-work&#34;&gt;How does kotlinx-html work?&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Note: This code will not be included in the github repo for this project&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;This is what our main function looks like in &lt;code&gt;Main.kt&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;package co.kenrg.snake
+
+import kotlinx.html.dom.append
+import kotlinx.html.js.h1
+import kotlin.browser.document
+
+fun main(args: Array&amp;lt;String&amp;gt;) {
+    document.body?.append {
+        h1 { +&amp;quot;🐍 Snake&amp;quot; }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The first thing we do is get a handle on &lt;code&gt;document.body&lt;/code&gt;. This corresponds to the HTML node created by the &lt;code&gt;&amp;lt;body&amp;gt;&lt;/code&gt; tag. In our
+&lt;code&gt;index.html&lt;/code&gt; file, this is empty and has a class of &lt;code&gt;&#39;container&#39;&lt;/code&gt;. The &lt;code&gt;.append&lt;/code&gt; function is an &lt;a href=&#34;https://kotlinlang.org/docs/reference/extensions.html#extension-functions&#34;&gt;extension function&lt;/a&gt;
+on the &lt;code&gt;Node&lt;/code&gt; class, of which &lt;code&gt;document.body&lt;/code&gt; is an instance. Actually, it is a nullable instance, which is why we need the
+null-safe operator (&lt;code&gt;?.&lt;/code&gt;) when calling &lt;code&gt;apply&lt;/code&gt;. The &lt;code&gt;apply&lt;/code&gt; function has the following signature:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;fun Node.append(block : TagConsumer&amp;lt;HTMLElement&amp;gt;.() -&amp;gt; Unit) : List&amp;lt;HTMLElement&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;block&lt;/code&gt; parameter is a function/closure with a &lt;a href=&#34;https://kotlinlang.org/docs/reference/lambdas.html#function-literals-with-receiver&#34;&gt;receiver&lt;/a&gt;
+of &lt;code&gt;TagConsumer&amp;lt;HTMLElement&amp;gt;&lt;/code&gt;, which means that any code in that block will be executed as if it were an extension function on
+&lt;code&gt;TagConsumer&amp;lt;HTMLElement&amp;gt;&lt;/code&gt;. This is how the kotlinx-html library achieves its DSL-like syntax.&lt;/p&gt;
+
+&lt;p&gt;Within the function/closure/block (I&amp;rsquo;ve seen it called all three) we call the &lt;code&gt;h1&lt;/code&gt; function, which has the following signature:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;fun TagConsumer&amp;lt;HTMLElement&amp;gt;.h1(classes : String? = null, block : H1.() -&amp;gt; Unit = {}) : HTMLHeadingElement
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As expected, since it&amp;rsquo;s executed within the block passed to &lt;code&gt;body.apply&lt;/code&gt;, the &lt;code&gt;h1&lt;/code&gt; function is a function on &lt;code&gt;TagConsumer&amp;lt;HtmlElement&amp;gt;&lt;/code&gt;
+(an extension function to be precise, which is how all of these functions seem to be implemented). We could have
+equivalently written our &lt;code&gt;main&lt;/code&gt; function as follows, with the same exact result:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;fun main(args: Array&amp;lt;String&amp;gt;) {
+    document.body?.append {
+        this.h1 { +&amp;quot;🐍 Snake&amp;quot; }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;where the &lt;code&gt;this&lt;/code&gt; keyword in &lt;code&gt;this.h1&lt;/code&gt; refers to the &lt;code&gt;TagConsumer&amp;lt;HTMLElement&amp;gt;&lt;/code&gt; instance that the block passed to &lt;code&gt;.apply&lt;/code&gt; will be
+executing within. This is definitely on the more confusing side, but I encourage you to read through the Kotlin documentation for
+&lt;a href=&#34;https://kotlinlang.org/docs/reference/extensions.html#extension-functions&#34;&gt;extension functions&lt;/a&gt; and &lt;a href=&#34;https://kotlinlang.org/docs/reference/lambdas.html#function-literals-with-receiver&#34;&gt;function literals with receiver&lt;/a&gt;
+and it should help. Also, playing around with the &lt;a href=&#34;https://try.kotlinlang.org/#/Examples/Longer%20examples/HTML%20Builder/HTML%20Builder.kt&#34;&gt;HTML Builder example&lt;/a&gt;
+on the Kotlin playground page will help a lot too (it definitely helped me).&lt;/p&gt;
+
+&lt;p&gt;The only other weird thing is the &lt;code&gt;+&amp;quot;🐍 Snake&amp;quot;&lt;/code&gt; line within the &lt;code&gt;h1&lt;/code&gt; block.&lt;/p&gt;
+
+&lt;p&gt;The HTML Builder example linked above differs slightly from the implementation of the kotlinx.html library, but it can definitely
+provide us some insight into what&amp;rsquo;s happening here. In that example, we see this definition in the &lt;code&gt;TagWithText&lt;/code&gt; class:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;operator fun String.unaryPlus() {
+  children.add(TextElement(this))
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Kotlin provides us the ability to &lt;a href=&#34;https://kotlinlang.org/docs/reference/operator-overloading.html&#34;&gt;overload operators&lt;/a&gt;, which means
+we can define custom implementations for the standard operators. In this case, the unary plus operator (the counterpart to the unary
+minus operator, which allows us to define negative numbers) is being overridden to mean &amp;ldquo;set the text content of this element&amp;rdquo;. This,
+in my opinion, is the most unintuitive part of the kotlinx.html library, but it&amp;rsquo;s a nice shortcut for defining the text content of
+a DOM node. There is another (possibly less-idiomatic, but also possibly clearer) way of doing it, but first I need to show how the
+library handles setting a node&amp;rsquo;s attributes, and how to nest child nodes.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;block&lt;/code&gt; parameter that&amp;rsquo;s passed into the &lt;code&gt;h1&lt;/code&gt; function executes within the context of an instance of the &lt;code&gt;H1&lt;/code&gt; class,
+meaning that setting the &lt;code&gt;id&lt;/code&gt; or the &lt;code&gt;tabIndex&lt;/code&gt; properties of an &lt;code&gt;h1&lt;/code&gt; is done like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;h1 {
+  id = &amp;quot;some-id&amp;quot;
+  tabIndex = &amp;quot;0&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;All of the attributes have type &lt;code&gt;String&lt;/code&gt;, which corresponds well to the DOM, since all attributes are passed as strings, but isn&amp;rsquo;t
+extraordinarily type-safe, since &lt;code&gt;tabIndex&lt;/code&gt; should probably be an &lt;code&gt;Int&lt;/code&gt;. I have no inside sources or anything, but I&amp;rsquo;d expect this
+to change over time as the library gets more mature.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Here is some pseudo-code to illustrate what&amp;rsquo;s happening here with this block:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;val h1 = H1()
+h1.id = &amp;quot;some-id&amp;quot;
+h1.tabIndex = &amp;quot;0&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Nested DOM nodes can be defined in this way too, by adding code to the block passed to the parent&amp;rsquo;s function. For example, creating
+a div with a span and a button inside of it would look like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;div {
+  span { +&amp;quot;Some label&amp;quot; }
+  button { 
+    +&amp;quot;Click me&amp;quot;
+    onClickFunction = { event -&amp;gt; println(&amp;quot;Button clicked!&amp;quot;) } 
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here is some pseudo-code to illustrate what&amp;rsquo;s happening here with this block:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;val div = DIV()
+
+val span = SPAN()
+span.add(TextElement(&amp;quot;Some label&amp;quot;))
+div.addChild(span)
+
+val button = BUTTON()
+button.add(TextElement(&amp;quot;Click me&amp;quot;))
+button.onClickFunction = { event -&amp;gt; println(&amp;quot;Button clicked!&amp;quot;) }
+div.addChild(button)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This isn&amp;rsquo;t at all what the underlying Kotlin code is doing (or at least, not &lt;em&gt;all&lt;/em&gt; that it&amp;rsquo;s doing), but it provides a good way to
+conceptualize this &amp;ldquo;DSL&amp;rdquo;.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m still using the &lt;code&gt;+&lt;/code&gt;/&lt;code&gt;unaryPlus&lt;/code&gt; operator in that example above, but now that we understand nesting within these blocks, we could
+substitute it with a call to the &lt;code&gt;text&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;div {
+  span { text(&amp;quot;Some label&amp;quot;) }
+  button { 
+    text(&amp;quot;Click me&amp;quot;)
+    onClickFunction = { event -&amp;gt; println(&amp;quot;Button clicked!&amp;quot;) } 
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I think it&amp;rsquo;s clearer what the intent is when we use the &lt;code&gt;text&lt;/code&gt; function, but it is slightly more verbose, especially when considering
+that setting the text content of a node is one of the most common use cases. It may seem unintuitive at first, but the unary plus
+operator does quickly become a useful shortcut.&lt;/p&gt;
+
+&lt;h2 id=&#34;to-be-continued&#34;&gt;To be continued&amp;hellip;&lt;/h2&gt;
+
+&lt;p&gt;I don&amp;rsquo;t want these articles to be too long, and I think this is a good stopping point for now, so we&amp;rsquo;ll continue this in the next
+one (Part 1). All of the code is &lt;a href=&#34;https://github.com/kengorab/kotlin-js-snake/tree/step-0&#34;&gt;available on my github&lt;/a&gt;, under the tag
+&lt;code&gt;step-0&lt;/code&gt;. There will be future tags for future articles. Stay tuned for more!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Compiling Kotlin to Javascript</title>
