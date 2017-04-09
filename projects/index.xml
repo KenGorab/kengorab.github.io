@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Blog</title>
+    <link>http://kenrg.co/projects/index.xml</link>
+    <description>Recent content in Projects on Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="http://kenrg.co/projects/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title></title>
+      <link>http://kenrg.co/projects/snake-kotlin-js/INFO/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://kenrg.co/projects/snake-kotlin-js/INFO/</guid>
+      <description>
+
+&lt;h1 id=&#34;snake-game-in-kotlin-js&#34;&gt;Snake Game in Kotlin-JS&lt;/h1&gt;
+
+&lt;p&gt;An implementation of the classic snake game in Kotlin, compiled to Javascript&lt;/p&gt;
+
+&lt;p&gt;The assets in this directory are the result of a successful build of my &lt;a href=&#34;https://github.com/kengorab/kotlin-js-snake&#34;&gt;kotlin-js-snake&lt;/a&gt;
+repo. Should these assets require updating, follow these steps:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Clone that repo&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;./gradlew build&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Copy &lt;code&gt;kotlin.js&lt;/code&gt;, &lt;code&gt;kotlin-html-js.js&lt;/code&gt;, and &lt;code&gt;module.js&lt;/code&gt; from &lt;code&gt;build/js&lt;/code&gt; into the &lt;code&gt;js&lt;/code&gt; directory here&lt;/li&gt;
+&lt;li&gt;Copy the &lt;code&gt;index.html&lt;/code&gt; file here, if changed&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>http://kenrg.co/projects/snake-kotlin-js/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://kenrg.co/projects/snake-kotlin-js/</guid>
+      <description>&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;🐍 Snake&lt;/title&gt;
+    &lt;link rel=&#34;stylesheet&#34; href=&#34;https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css&#34;&gt;
+    &lt;link rel=&#34;apple-touch-icon&#34; sizes=&#34;57x57&#34; href=&#34;{{ &#34;/favicons/apple-icon-57x57.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;apple-touch-icon&#34; sizes=&#34;60x60&#34; href=&#34;{{ &#34;/favicons/apple-icon-60x60.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;apple-touch-icon&#34; sizes=&#34;72x72&#34; href=&#34;{{ &#34;/favicons/apple-icon-72x72.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;apple-touch-icon&#34; sizes=&#34;76x76&#34; href=&#34;{{ &#34;/favicons/apple-icon-76x76.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;apple-touch-icon&#34; sizes=&#34;114x114&#34; href=&#34;{{ &#34;/favicons/apple-icon-114x114.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;apple-touch-icon&#34; sizes=&#34;120x120&#34; href=&#34;{{ &#34;/favicons/apple-icon-120x120.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;apple-touch-icon&#34; sizes=&#34;144x144&#34; href=&#34;{{ &#34;/favicons/apple-icon-144x144.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;apple-touch-icon&#34; sizes=&#34;152x152&#34; href=&#34;{{ &#34;/favicons/apple-icon-152x152.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;apple-touch-icon&#34; sizes=&#34;180x180&#34; href=&#34;{{ &#34;/favicons/apple-icon-180x180.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;icon&#34; type=&#34;image/png&#34; sizes=&#34;192x192&#34;  href=&#34;{{ &#34;/favicons/android-icon-192x192.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;icon&#34; type=&#34;image/png&#34; sizes=&#34;32x32&#34; href=&#34;{{ &#34;/favicons/favicon-32x32.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;icon&#34; type=&#34;image/png&#34; sizes=&#34;96x96&#34; href=&#34;{{ &#34;/favicons/favicon-96x96.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;icon&#34; type=&#34;image/png&#34; sizes=&#34;16x16&#34; href=&#34;{{ &#34;/favicons/favicon-16x16.png&#34; | absURL }}&#34;&gt;
+    &lt;link rel=&#34;manifest&#34; href=&#34;{{ &#34;/favicons/manifest.json&#34; | absURL }}&#34;&gt;
+&lt;/head&gt;
+&lt;body class=&#34;container&#34;&gt;
+
+&lt;script src=&#34;javascript/kotlin.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;javascript/kotlinx-html-js.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;javascript/module.js&#34;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -12,6 +12,14 @@
   </url>
   
   <url>
+    <loc>http://kenrg.co/projects/snake-kotlin-js/INFO/</loc>
+  </url>
+  
+  <url>
+    <loc>http://kenrg.co/projects/snake-kotlin-js/</loc>
+  </url>
+  
+  <url>
     <loc>http://kenrg.co/about/</loc>
   </url>
   
@@ -48,6 +56,15 @@
     <loc>http://kenrg.co/categories/kotlinx/</loc>
     <lastmod>2017-04-07T23:29:04-04:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://kenrg.co/projects/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://kenrg.co/projects/</loc>
   </url>
   
 </urlset>
