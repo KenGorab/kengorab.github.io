@@ -28,7 +28,11 @@ advantage of language features like &lt;a href=&#34;https://kotlinlang.org/docs/
 &lt;p&gt;So, using Kotlin and Kotlinx.html, let&amp;rsquo;s try to write the game Snake and run it in the browser. All of the code will be available on
 my github, and there will be a tag for steps along the way, in case you wanted to try it for yourself.&lt;/p&gt;
 
-&lt;p&gt;This is going to be a multi-part article, so let&amp;rsquo;s get started! 🐍🐍🐍&lt;/p&gt;
+&lt;p&gt;If you want to check out the final result and play the game for yourself, &lt;a href=&#34;http://kenrg.co/projects/snake-kotlin-js&#34;&gt;check it out&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;This is going to be a multi-part article, so let&amp;rsquo;s get started!&lt;/p&gt;
+
+&lt;p&gt;🐍🐍🐍&lt;/p&gt;
 
 &lt;h1 id=&#34;step-0-project-setup&#34;&gt;Step 0: Project Setup&lt;/h1&gt;
 
