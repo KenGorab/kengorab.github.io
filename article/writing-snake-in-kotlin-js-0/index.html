@@ -276,7 +276,7 @@ fun main(args: Array&lt;String&gt;) {
 <p>The first thing we do is get a handle on <code>document.body</code>. This corresponds to the HTML node created by the <code>&lt;body&gt;</code> tag. In our
 <code>index.html</code> file, this is empty and has a class of <code>'container'</code>. The <code>.append</code> function is an <a href="https://kotlinlang.org/docs/reference/extensions.html#extension-functions">extension function</a>
 on the <code>Node</code> class, of which <code>document.body</code> is an instance. Actually, it is a nullable instance, which is why we need the
-null-safe operator (<code>?.</code>) when calling <code>apply</code>. The <code>apply</code> function has the following signature:</p>
+null-safe operator (<code>?.</code>) when calling <code>append</code>. The <code>append</code> function has the following signature:</p>
 
 <pre><code class="language-kotlin">fun Node.append(block : TagConsumer&lt;HTMLElement&gt;.() -&gt; Unit) : List&lt;HTMLElement&gt;
 </code></pre>
@@ -290,7 +290,7 @@ of <code>TagConsumer&lt;HTMLElement&gt;</code>, which means that any code in tha
 <pre><code class="language-kotlin">fun TagConsumer&lt;HTMLElement&gt;.h1(classes : String? = null, block : H1.() -&gt; Unit = {}) : HTMLHeadingElement
 </code></pre>
 
-<p>As expected, since it&rsquo;s executed within the block passed to <code>body.apply</code>, the <code>h1</code> function is a function on <code>TagConsumer&lt;HtmlElement&gt;</code>
+<p>As expected, since it&rsquo;s executed within the block passed to <code>body.append</code>, <code>h1</code> is a function on <code>TagConsumer&lt;HtmlElement&gt;</code>
 (an extension function to be precise, which is how all of these functions seem to be implemented). We could have
 equivalently written our <code>main</code> function as follows, with the same exact result:</p>
 
@@ -301,7 +301,7 @@ equivalently written our <code>main</code> function as follows, with the same ex
 }
 </code></pre>
 
-<p>where the <code>this</code> keyword in <code>this.h1</code> refers to the <code>TagConsumer&lt;HTMLElement&gt;</code> instance that the block passed to <code>.apply</code> will be
+<p>where the <code>this</code> keyword in <code>this.h1</code> refers to the <code>TagConsumer&lt;HTMLElement&gt;</code> instance that the block passed to <code>.append</code> will be
 executing within. This is definitely on the more confusing side, but I encourage you to read through the Kotlin documentation for
 <a href="https://kotlinlang.org/docs/reference/extensions.html#extension-functions">extension functions</a> and <a href="https://kotlinlang.org/docs/reference/lambdas.html#function-literals-with-receiver">function literals with receiver</a>
 and it should help. Also, playing around with the <a href="https://try.kotlinlang.org/#/Examples/Longer%20examples/HTML%20Builder/HTML%20Builder.kt">HTML Builder example</a>

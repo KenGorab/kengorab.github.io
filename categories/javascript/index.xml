@@ -459,7 +459,7 @@ fun main(args: Array&amp;lt;String&amp;gt;) {
 &lt;p&gt;The first thing we do is get a handle on &lt;code&gt;document.body&lt;/code&gt;. This corresponds to the HTML node created by the &lt;code&gt;&amp;lt;body&amp;gt;&lt;/code&gt; tag. In our
 &lt;code&gt;index.html&lt;/code&gt; file, this is empty and has a class of &lt;code&gt;&#39;container&#39;&lt;/code&gt;. The &lt;code&gt;.append&lt;/code&gt; function is an &lt;a href=&#34;https://kotlinlang.org/docs/reference/extensions.html#extension-functions&#34;&gt;extension function&lt;/a&gt;
 on the &lt;code&gt;Node&lt;/code&gt; class, of which &lt;code&gt;document.body&lt;/code&gt; is an instance. Actually, it is a nullable instance, which is why we need the
-null-safe operator (&lt;code&gt;?.&lt;/code&gt;) when calling &lt;code&gt;apply&lt;/code&gt;. The &lt;code&gt;apply&lt;/code&gt; function has the following signature:&lt;/p&gt;
+null-safe operator (&lt;code&gt;?.&lt;/code&gt;) when calling &lt;code&gt;append&lt;/code&gt;. The &lt;code&gt;append&lt;/code&gt; function has the following signature:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;fun Node.append(block : TagConsumer&amp;lt;HTMLElement&amp;gt;.() -&amp;gt; Unit) : List&amp;lt;HTMLElement&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
@@ -473,7 +473,7 @@ of &lt;code&gt;TagConsumer&amp;lt;HTMLElement&amp;gt;&lt;/code&gt;, which means 
 &lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;fun TagConsumer&amp;lt;HTMLElement&amp;gt;.h1(classes : String? = null, block : H1.() -&amp;gt; Unit = {}) : HTMLHeadingElement
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;As expected, since it&amp;rsquo;s executed within the block passed to &lt;code&gt;body.apply&lt;/code&gt;, the &lt;code&gt;h1&lt;/code&gt; function is a function on &lt;code&gt;TagConsumer&amp;lt;HtmlElement&amp;gt;&lt;/code&gt;
+&lt;p&gt;As expected, since it&amp;rsquo;s executed within the block passed to &lt;code&gt;body.append&lt;/code&gt;, &lt;code&gt;h1&lt;/code&gt; is a function on &lt;code&gt;TagConsumer&amp;lt;HtmlElement&amp;gt;&lt;/code&gt;
 (an extension function to be precise, which is how all of these functions seem to be implemented). We could have
 equivalently written our &lt;code&gt;main&lt;/code&gt; function as follows, with the same exact result:&lt;/p&gt;
 
@@ -484,7 +484,7 @@ equivalently written our &lt;code&gt;main&lt;/code&gt; function as follows, with
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;where the &lt;code&gt;this&lt;/code&gt; keyword in &lt;code&gt;this.h1&lt;/code&gt; refers to the &lt;code&gt;TagConsumer&amp;lt;HTMLElement&amp;gt;&lt;/code&gt; instance that the block passed to &lt;code&gt;.apply&lt;/code&gt; will be
+&lt;p&gt;where the &lt;code&gt;this&lt;/code&gt; keyword in &lt;code&gt;this.h1&lt;/code&gt; refers to the &lt;code&gt;TagConsumer&amp;lt;HTMLElement&amp;gt;&lt;/code&gt; instance that the block passed to &lt;code&gt;.append&lt;/code&gt; will be
 executing within. This is definitely on the more confusing side, but I encourage you to read through the Kotlin documentation for
 &lt;a href=&#34;https://kotlinlang.org/docs/reference/extensions.html#extension-functions&#34;&gt;extension functions&lt;/a&gt; and &lt;a href=&#34;https://kotlinlang.org/docs/reference/lambdas.html#function-literals-with-receiver&#34;&gt;function literals with receiver&lt;/a&gt;
 and it should help. Also, playing around with the &lt;a href=&#34;https://try.kotlinlang.org/#/Examples/Longer%20examples/HTML%20Builder/HTML%20Builder.kt&#34;&gt;HTML Builder example&lt;/a&gt;
