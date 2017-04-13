@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Writing Snake in Javascript with Kotlin: Part 1 &middot; Ken Gorab</title>
+
+  
+  <link rel="stylesheet" href="http://kenrg.co/css/poole.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/hyde.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/hyde-x.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/highlight/darcula.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Josefin+Sans">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+
+  
+  <link rel="apple-touch-icon" sizes="57x57" href="http://kenrg.co/favicons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="http://kenrg.co/favicons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="http://kenrg.co/favicons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="http://kenrg.co/favicons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="http://kenrg.co/favicons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="http://kenrg.co/favicons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="http://kenrg.co/favicons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="http://kenrg.co/favicons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://kenrg.co/favicons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="http://kenrg.co/favicons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://kenrg.co/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="http://kenrg.co/favicons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://kenrg.co/favicons/favicon-16x16.png">
+  <link rel="manifest" href="http://kenrg.co/favicons/manifest.json">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="kotlin,kotlinx,kotlinx.html,kotlin 1.1,javascript,tutorial,snake,game">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-96470347-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1 class="sidebar-author-name">Ken Gorab</h1>
+      
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://kenrg.co/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://kenrg.co/about/">About Me</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://kenrg.co/projects/">Projects</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/kengorab"><i class="fa fa-github-square"></i> Github</a><br/>
+      
+      
+      <a href="https://www.linkedin.com/in/kenneth-gorab-08862646"><i class="fa fa-linkedin-square"></i> LinkedIn</a>
+      
+      
+      
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>
+    Copyright &copy; 2017 Ken Gorab<br/>
+    <small>Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></small>
+    </p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">Writing Snake in Javascript with Kotlin: Part 1</h1>
+    <span class="post-date">Apr 10, 2017 &middot; <a href="http://kenrg.co/article/writing-snake-in-kotlin-js-1/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://kenrg.co/categories/kotlin">kotlin</a><a class="label" href="http://kenrg.co/categories/kotlinx">kotlinx</a><a class="label" href="http://kenrg.co/categories/javascript">javascript</a>
+    </span>
+    
+
+<p><em>This is Part 1 of a multi-part article series on writing the classic Snake game in Kotlin and compiling it to Javascript to
+run in the browser. If you want to start from the beginning, you should check out <a href="/article/writing-snake-in-kotlin-js-0/">Part 0</a></em>.</p>
+
+<p><em>All of the code for this project will be available on <a href="https://github.com/kengorab/kotlin-js-snake/tree/master">my github</a>, and I&rsquo;ll
+be starting from the tag <code>step-0</code>, right where the previous post left off. The results after this part will be saved as the tag
+<code>step-1</code>.</em></p>
+
+<hr />
+
+<h1 id="the-plan">The Plan</h1>
+
+<p>It&rsquo;s always a good idea to have a general plan for how a project should be laid out, and how its various components will link up,
+even for small projects like this one. I&rsquo;ve organized this project into 4 main parts:</p>
+
+<ul>
+<li>The Grid: This is the area in which the game takes place; it&rsquo;s where the snake moves around in, and where the food appears</li>
+<li>The Food: This should occupy 1 space in the grid, and if the snake &ldquo;eats&rdquo; it, it gets randomly placed in a new space</li>
+<li>The Snake: This is the player; it&rsquo;s several contiguous spaces in the grid that move up/down/left/right, and eat food</li>
+<li>The Game: This creates the grid, keeps track of the food and the snake, updates score, and runs the main game loop</li>
+</ul>
+
+<p>In this part, let&rsquo;s create the Grid. It wouldn&rsquo;t be able to do much of anything without the Game, since that&rsquo;s what runs the game
+loop and ties everything together, so we&rsquo;ll build a preliminary version of that as well; the Game that we build in this part will
+grow over time.</p>
+
+<h1 id="the-grid">The Grid</h1>
+
+<p>Let&rsquo;s head over to our Kotlin code and create a new class called <code>Grid</code>. We know right away that we want our Grid to have a width
+and a height, so let&rsquo;s get the basis of our class squared away:</p>
+
+<pre><code class="language-kotlin">class Grid(val width: Int, val height: Int) {
+}
+</code></pre>
+
+<p>A grid is composed of many rows of cells, so we could add a property <code>val grid: List&lt;List&lt;Cell&gt;&gt;</code>, but what should <code>Cell</code> be?
+A cell can be in 1 of 2 states - it can be filled or not filled. Also, since we&rsquo;re going to be using kotlinx.html to generate these
+cells as <code>&lt;div&gt;</code>s, we&rsquo;ll need to store a reference to the actual underlying HTML element, so we can change its background color according
+to its filled-ness. So now our <code>Grid</code> class could look something like this:</p>
+
+<pre><code class="language-kotlin">class Grid(val game: Game) : Component {
+    data class Cell(val node: HTMLDivElement, var filled: Boolean)
+
+    val grid: List&lt;List&lt;Cell&gt;&gt;
+
+    init {
+        this.grid = this.buildGrid()
+    }
+}
+</code></pre>
+
+<p>Okay, but what does that <code>buildGrid</code> function do? Well, we know we want to build a list of rows of cells, each of which has an HTML
+<code>&lt;div&gt;</code> element and a boolean to denote whether or not it&rsquo;s filled in, so let&rsquo;s start with that and iterate on it.</p>
+
+<pre><code class="language-kotlin">    private fun buildGrid(): List&lt;List&lt;Cell&gt;&gt; {
+        return (0..width).map { x -&gt;
+            (0..height).map { y -&gt;
+                val cell = document.create.div()
+                Cell(cell, false)
+            }
+        }
+    }
+</code></pre>
+
+<p>Here we&rsquo;re using the <code>div</code> extension function from the kotlinx.html library, so make sure you import <code>kotlinx.html.js.div</code>, if prompted.
+We&rsquo;re also using Kotlin&rsquo;s <a href="https://kotlinlang.org/docs/reference/ranges.html">range operator</a> here to very succinctly create a
+list of lists (each &ldquo;inner&rdquo; list represents the row of <code>Cells</code>). Typically, in languages which don&rsquo;t encourage this kind of functional
+style of programming (like Java, for example), this would be done using nested for-loops, and mutating list variables from outside of
+the loops&rsquo; closures. As a fan of functional, declarative programming, it makes far more sense to me to <code>map</code> over a range of numbers
+and build up lists this way.</p>
+
+<p>Just running this though won&rsquo;t actually do anything - we may have created these DOM nodes, but we haven&rsquo;t added them to the page at all!
+To do that, we should probably have a place to put them, so let&rsquo;s head back to <code>Main.kt</code> for a second.</p>
+
+<p>Currently, all our <code>main</code> function in <code>Main.kt</code> does is add an <code>&lt;h1&gt;</code> element to the page. Since we want to draw a grid, let&rsquo;s create
+a container within which our grid&rsquo;s cells will be contained. The <code>main</code> function should now look like this:</p>
+
+<pre><code class="language-kotlin">fun main(args: Array&lt;String&gt;) {
+    var gridContainer: Node? = null
+
+    document.body?.append {
+	h1 { +&quot;🐍 Snake&quot; }
+	gridContainer = div { style = &quot;position: relative&quot; }
+    }
+}
+</code></pre>
+
+<p>The kotlinx.html DSL allows for assignment of created nodes to variables, so we can reference them later on. Our <code>gridContainer</code> div
+has a style of <code>position: absolute</code>, which isn&rsquo;t particularly important - we&rsquo;re going to be positioning our cells absolutely, so this
+helps our game to not look like <em>total</em> garbage.</p>
+
+<p>Now that our <code>main</code> function has created the <code>gridContainer</code> local variable, add this as the last line:</p>
+
+<pre><code class="language-kotlin">val grid = Grid(10, 10, gridContainer)
+</code></pre>
+
+<p>This will not compile currently, because our <code>Grid</code> constructor only accepts 2 parameters (a width and a height), so let&rsquo;s add this
+third one:</p>
+
+<pre><code class="language-kotlin">class Grid(val width: Int, val height: Int, val gridContainer: Node?) {
+    ...
+}
+</code></pre>
+
+<p>So, now that we&rsquo;re creating elements for each of our grid&rsquo;s cells, and we have a place to put them, let&rsquo;s arrange them into a grid.
+Here&rsquo;s what the <code>Grid</code>&rsquo;s <code>buildGrid</code> function looks like now:</p>
+
+<pre><code class="language-kotlin">private fun buildGrid(): List&lt;List&lt;Cell&gt;&gt; {
+    val cellSize = 25
+
+    return (0..width).map { x -&gt;
+        (0..height).map { y -&gt;
+            val cell = document.create.div()
+            cell.style.apply {
+                position = &quot;absolute&quot;
+                width = &quot;${cellSize}px&quot;
+                height = &quot;${cellSize}px&quot;
+                left = &quot;${x * cellSize}px&quot;
+                top = &quot;${y * cellSize}px&quot;
+                border = &quot;1px solid #777&quot;
+            }
+            gridContainer?.appendChild(cell)
+            Cell(cell, false)
+        }
+    }
+}
+</code></pre>
+
+<p>What&rsquo;s new? Well, we&rsquo;re applying some styles to our cells now, which is just done by assigning to values of the <code>cell.style</code> property.</p>
+
+<p>Note the use of the <code>.apply</code> block here. This is a useful feature of Kotlin, and is equivalent to writing:</p>
+
+<pre><code class="language-kotlin">cell.style.position = &quot;absolute&quot;
+cell.style.width = &quot;${cellSize}px&quot;
+cell.style.height = &quot;${cellSize}px&quot;
+cell.style.left = &quot;${x * cellSize}px&quot;
+cell.style.top = &quot;${y * cellSize}px&quot;
+cell.style.border = &quot;1px solid #777&quot;
+</code></pre>
+
+<p>which removes a lot of repetitive and unnecessary stuff to read. Plus, it helps to group like things together; your eyes can see an
+<code>.apply</code> block, and think &ldquo;this is where all modifications to that value are happening&rdquo;.</p>
+
+<p>We also do a bit of positioning using the <code>cellSize</code> variable (which is just hard-coded to be 25 pixels), and add a border of dark
+grey. The last thing we do is append our newly-created and newly-styled div to the grid container that we&rsquo;ve just added to our
+<code>Grid</code> constructor, so our cells will actually appear on the page.</p>
+
+<p>Let&rsquo;s run <code>./gradlew build</code>, refresh our web browser and <em>check out</em> what we&rsquo;ve got!</p>
+
+<p><img src="img/snake-grid.png" alt="Behold, the Glorious Grid!" /></p>
+
+<p><em>Yes, it&rsquo;s an 11x11 grid, even though our <code>main</code> function in <code>Main.kt</code> passes in a width and height of 10 when creating the <code>Grid</code>.
+It&rsquo;s not super important, but we may as well fix it. In the <code>buildGrid</code> function in <code>Grid</code>, instead of mapping over the ranges
+<code>(0..width)</code> and <code>(0..height)</code>, it should be <code>(0..width - 1)</code> and <code>(0..height - 1)</code>.</em></p>
+
+<p>That about wraps up the basics of the grid, though. There&rsquo;s one other thing that we need the grid to be able to do, and that&rsquo;s display
+a filled-in square vs a white square when the cell&rsquo;s <code>filled</code> property is <code>true</code>. But, since nothing can set cells to be filled in yet,
+we&rsquo;re going to wait.</p>
+
+<p>Instead, let&rsquo;s lay out the basics of the <code>Game</code> and the game loop.</p>
+
+<h1 id="the-game">The Game</h1>
+
+<p>In the same package as the <code>Grid</code>, create a <code>Game</code> class, which will be empty for now except for two functions: <code>start</code> and <code>stop</code>, two
+commonly occurring actions in a game. We&rsquo;ll fill those in next.</p>
+
+<pre><code class="language-kotlin">package co.kenrg.snake
+
+class Game {
+    fun start() {
+
+    }
+
+    fun stop() {
+
+    }
+}
+</code></pre>
+
+<p>I will not claim to be an expert in writing games, but the absolute basics involve a &ldquo;game loop&rdquo; - an infinite loop which runs every few
+milliseconds (however many times is necessary in order to achieve the desired frames per second, or FPS), and updates the state of the
+game on each loop. In Javascript, this kind of thing can be done using the <a href="https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/timers#setInterval(callback_ms)">setInterval</a>
+function available globally on <code>window</code>. This allows us to specify a block of code that will be continually run, and the interval at
+which it will repeat.</p>
+
+<p>Obviously we don&rsquo;t want to dispatch this function forever with no way of stopping it (aside from the user closing their browser tab
+maybe, which isn&rsquo;t a good solution), so the <code>window.setInterval</code> function returns an integer. This number corresponds to some identifier
+within the Javascript runtime, which isn&rsquo;t especially useful to us, but we can pass it to
+<a href="https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/timers#clearInterval(ID)">clearInterval</a> (another function available
+on <code>window</code>), which will stop our loop.</p>
+
+<pre><code class="language-kotlin">class Game {
+    private var intervalLoopId: Int? = null
+    private val framesPerSecond = 15
+
+    fun update() {
+        // Perform some logic here
+    }
+
+    fun start() {
+        intervalLoopId = window.setInterval({
+            this.update()
+        }, 1000 / framesPerSecond)
+    }
+
+    fun stop() {
+        if (intervalLoopId != null)
+            window.clearInterval(intervalLoopId!!)
+        intervalLoopId = null
+    }
+}
+</code></pre>
+
+<p>We won&rsquo;t have any updating logic for now (we&rsquo;ll get to that in a future post, once we start adding things that move, like the snake!)
+but we <em>do</em> want the <code>Game</code> class to basically act as the puppeteer for the whole game application. That way, to our <code>Main.kt</code> class,
+the API into our game (right now just starting and stopping it) is very well-defined. So, let&rsquo;s add the creation of our <code>Grid</code> instance
+within the instantiation of the <code>Game</code> class.</p>
+
+<p>This means that our <code>Game</code> class now needs to provide the <code>gridContainer</code> DOM node to our <code>Grid</code>. Rather than the <code>Game</code> class reaching
+into the DOM tree we create in <code>Main.kt</code>, let&rsquo;s accept it as a parameter to the <code>Game</code> constructor. Our <code>Game</code> constructor should now
+look like this:</p>
+
+<pre><code class="language-kotlin">class Game(val gridNode: Node?) {
+  ...
+}
+</code></pre>
+
+<p>and our <code>main</code> function within <code>Main.kt</code> should look like this:</p>
+
+<pre><code class="language-kotlin">fun main(args: Array&lt;String&gt;) {
+    var gridContainer: Node? = null
+
+    document.body?.append {
+        h1 { +&quot;🐍 Snake&quot; }
+        gridContainer = div { style = &quot;position: relative&quot; }
+    }
+
+    val game = Game(gridContainer)
+    game.start()
+}
+</code></pre>
+
+<p>Calling <code>game.start()</code> won&rsquo;t do anything right now, since nothing happens within the <code>update</code> function in <code>Game</code>, but let&rsquo;s do it
+anyway. Also, it&rsquo;s important again to note the well-defined API of the <code>Game</code> class. Since we created the <code>gridContainer</code> in the
+<code>Main.kt</code> file, it makes sense that we pass it into the <code>Game</code> class, since it&rsquo;s a dependency of that class. The alternative would be
+to do something resembling the jQuery days, wherein we assign an id to the <code>gridContainer</code>&rsquo;s div, and then get a handle on it within
+the <code>Game</code> class. If that last bit felt wrong, that&rsquo;s because it should! Passing the <code>gridContainer</code> into the <code>Game</code> class means that,
+from this point on, we don&rsquo;t need to care about it with respect to the DOM. If we remove it, change its position, or rename it, the
+core logic of the <code>Game</code> remains the same.</p>
+
+<p>This may be a contrived example since everything is so simple, but this method of providing a class with all of its dependencies is a
+model that&rsquo;s far easier to understand than giving the <code>Game</code> arcane knowledge of the HTML page defined pretty far away from it. And
+who knows what other classes might require access to it in the future.</p>
+
+<p>Tangent aside, if we now build and run our app (using <code>./gradlew build</code> and <code>python -m SimpleHTTPServer</code>, in case you forgot), we
+should see nothing different, but this is exactly what we want!</p>
+
+<h2 id="to-be-continued">To be continued&hellip;</h2>
+
+<p>We now have our grid drawn, and the basic setup for our game and game loop. I think this is a good stopping point for this time around.
+Next time, we&rsquo;ll work on filling in grid cells, and creating and placing food in the grid.</p>
+
+<p>As with last time, the code in this article is available on my github, and the end result will be accessible at the
+<a href="https://github.com/kengorab/kotlin-js-snake/tree/step-1">step-1 tag</a>. Stay tuned for Part 2!</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "kenrg-blog";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "kenrg-blog";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://kenrg.co/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+

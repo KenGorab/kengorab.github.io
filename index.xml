@@ -6,8 +6,282 @@
     <description>Recent content on Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 07 Apr 2017 23:29:04 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 10 Apr 2017 20:58:30 -0400</lastBuildDate>
     <atom:link href="http://kenrg.co/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Writing Snake in Javascript with Kotlin: Part 1</title>
+      <link>http://kenrg.co/article/writing-snake-in-kotlin-js-1/</link>
+      <pubDate>Mon, 10 Apr 2017 20:58:30 -0400</pubDate>
+      
+      <guid>http://kenrg.co/article/writing-snake-in-kotlin-js-1/</guid>
+      <description>
+
+&lt;p&gt;&lt;em&gt;This is Part 1 of a multi-part article series on writing the classic Snake game in Kotlin and compiling it to Javascript to
+run in the browser. If you want to start from the beginning, you should check out &lt;a href=&#34;http://kenrg.co/article/writing-snake-in-kotlin-js-0/&#34;&gt;Part 0&lt;/a&gt;&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;All of the code for this project will be available on &lt;a href=&#34;https://github.com/kengorab/kotlin-js-snake/tree/master&#34;&gt;my github&lt;/a&gt;, and I&amp;rsquo;ll
+be starting from the tag &lt;code&gt;step-0&lt;/code&gt;, right where the previous post left off. The results after this part will be saved as the tag
+&lt;code&gt;step-1&lt;/code&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&#34;the-plan&#34;&gt;The Plan&lt;/h1&gt;
+
+&lt;p&gt;It&amp;rsquo;s always a good idea to have a general plan for how a project should be laid out, and how its various components will link up,
+even for small projects like this one. I&amp;rsquo;ve organized this project into 4 main parts:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The Grid: This is the area in which the game takes place; it&amp;rsquo;s where the snake moves around in, and where the food appears&lt;/li&gt;
+&lt;li&gt;The Food: This should occupy 1 space in the grid, and if the snake &amp;ldquo;eats&amp;rdquo; it, it gets randomly placed in a new space&lt;/li&gt;
+&lt;li&gt;The Snake: This is the player; it&amp;rsquo;s several contiguous spaces in the grid that move up/down/left/right, and eat food&lt;/li&gt;
+&lt;li&gt;The Game: This creates the grid, keeps track of the food and the snake, updates score, and runs the main game loop&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In this part, let&amp;rsquo;s create the Grid. It wouldn&amp;rsquo;t be able to do much of anything without the Game, since that&amp;rsquo;s what runs the game
+loop and ties everything together, so we&amp;rsquo;ll build a preliminary version of that as well; the Game that we build in this part will
+grow over time.&lt;/p&gt;
+
+&lt;h1 id=&#34;the-grid&#34;&gt;The Grid&lt;/h1&gt;
+
+&lt;p&gt;Let&amp;rsquo;s head over to our Kotlin code and create a new class called &lt;code&gt;Grid&lt;/code&gt;. We know right away that we want our Grid to have a width
+and a height, so let&amp;rsquo;s get the basis of our class squared away:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;class Grid(val width: Int, val height: Int) {
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A grid is composed of many rows of cells, so we could add a property &lt;code&gt;val grid: List&amp;lt;List&amp;lt;Cell&amp;gt;&amp;gt;&lt;/code&gt;, but what should &lt;code&gt;Cell&lt;/code&gt; be?
+A cell can be in 1 of 2 states - it can be filled or not filled. Also, since we&amp;rsquo;re going to be using kotlinx.html to generate these
+cells as &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt;s, we&amp;rsquo;ll need to store a reference to the actual underlying HTML element, so we can change its background color according
+to its filled-ness. So now our &lt;code&gt;Grid&lt;/code&gt; class could look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;class Grid(val game: Game) : Component {
+    data class Cell(val node: HTMLDivElement, var filled: Boolean)
+
+    val grid: List&amp;lt;List&amp;lt;Cell&amp;gt;&amp;gt;
+
+    init {
+        this.grid = this.buildGrid()
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Okay, but what does that &lt;code&gt;buildGrid&lt;/code&gt; function do? Well, we know we want to build a list of rows of cells, each of which has an HTML
+&lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt; element and a boolean to denote whether or not it&amp;rsquo;s filled in, so let&amp;rsquo;s start with that and iterate on it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;    private fun buildGrid(): List&amp;lt;List&amp;lt;Cell&amp;gt;&amp;gt; {
+        return (0..width).map { x -&amp;gt;
+            (0..height).map { y -&amp;gt;
+                val cell = document.create.div()
+                Cell(cell, false)
+            }
+        }
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here we&amp;rsquo;re using the &lt;code&gt;div&lt;/code&gt; extension function from the kotlinx.html library, so make sure you import &lt;code&gt;kotlinx.html.js.div&lt;/code&gt;, if prompted.
+We&amp;rsquo;re also using Kotlin&amp;rsquo;s &lt;a href=&#34;https://kotlinlang.org/docs/reference/ranges.html&#34;&gt;range operator&lt;/a&gt; here to very succinctly create a
+list of lists (each &amp;ldquo;inner&amp;rdquo; list represents the row of &lt;code&gt;Cells&lt;/code&gt;). Typically, in languages which don&amp;rsquo;t encourage this kind of functional
+style of programming (like Java, for example), this would be done using nested for-loops, and mutating list variables from outside of
+the loops&amp;rsquo; closures. As a fan of functional, declarative programming, it makes far more sense to me to &lt;code&gt;map&lt;/code&gt; over a range of numbers
+and build up lists this way.&lt;/p&gt;
+
+&lt;p&gt;Just running this though won&amp;rsquo;t actually do anything - we may have created these DOM nodes, but we haven&amp;rsquo;t added them to the page at all!
+To do that, we should probably have a place to put them, so let&amp;rsquo;s head back to &lt;code&gt;Main.kt&lt;/code&gt; for a second.&lt;/p&gt;
+
+&lt;p&gt;Currently, all our &lt;code&gt;main&lt;/code&gt; function in &lt;code&gt;Main.kt&lt;/code&gt; does is add an &lt;code&gt;&amp;lt;h1&amp;gt;&lt;/code&gt; element to the page. Since we want to draw a grid, let&amp;rsquo;s create
+a container within which our grid&amp;rsquo;s cells will be contained. The &lt;code&gt;main&lt;/code&gt; function should now look like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;fun main(args: Array&amp;lt;String&amp;gt;) {
+    var gridContainer: Node? = null
+
+    document.body?.append {
+	h1 { +&amp;quot;🐍 Snake&amp;quot; }
+	gridContainer = div { style = &amp;quot;position: relative&amp;quot; }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The kotlinx.html DSL allows for assignment of created nodes to variables, so we can reference them later on. Our &lt;code&gt;gridContainer&lt;/code&gt; div
+has a style of &lt;code&gt;position: absolute&lt;/code&gt;, which isn&amp;rsquo;t particularly important - we&amp;rsquo;re going to be positioning our cells absolutely, so this
+helps our game to not look like &lt;em&gt;total&lt;/em&gt; garbage.&lt;/p&gt;
+
+&lt;p&gt;Now that our &lt;code&gt;main&lt;/code&gt; function has created the &lt;code&gt;gridContainer&lt;/code&gt; local variable, add this as the last line:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;val grid = Grid(10, 10, gridContainer)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will not compile currently, because our &lt;code&gt;Grid&lt;/code&gt; constructor only accepts 2 parameters (a width and a height), so let&amp;rsquo;s add this
+third one:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;class Grid(val width: Int, val height: Int, val gridContainer: Node?) {
+    ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So, now that we&amp;rsquo;re creating elements for each of our grid&amp;rsquo;s cells, and we have a place to put them, let&amp;rsquo;s arrange them into a grid.
+Here&amp;rsquo;s what the &lt;code&gt;Grid&lt;/code&gt;&amp;rsquo;s &lt;code&gt;buildGrid&lt;/code&gt; function looks like now:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;private fun buildGrid(): List&amp;lt;List&amp;lt;Cell&amp;gt;&amp;gt; {
+    val cellSize = 25
+
+    return (0..width).map { x -&amp;gt;
+        (0..height).map { y -&amp;gt;
+            val cell = document.create.div()
+            cell.style.apply {
+                position = &amp;quot;absolute&amp;quot;
+                width = &amp;quot;${cellSize}px&amp;quot;
+                height = &amp;quot;${cellSize}px&amp;quot;
+                left = &amp;quot;${x * cellSize}px&amp;quot;
+                top = &amp;quot;${y * cellSize}px&amp;quot;
+                border = &amp;quot;1px solid #777&amp;quot;
+            }
+            gridContainer?.appendChild(cell)
+            Cell(cell, false)
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What&amp;rsquo;s new? Well, we&amp;rsquo;re applying some styles to our cells now, which is just done by assigning to values of the &lt;code&gt;cell.style&lt;/code&gt; property.&lt;/p&gt;
+
+&lt;p&gt;Note the use of the &lt;code&gt;.apply&lt;/code&gt; block here. This is a useful feature of Kotlin, and is equivalent to writing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;cell.style.position = &amp;quot;absolute&amp;quot;
+cell.style.width = &amp;quot;${cellSize}px&amp;quot;
+cell.style.height = &amp;quot;${cellSize}px&amp;quot;
+cell.style.left = &amp;quot;${x * cellSize}px&amp;quot;
+cell.style.top = &amp;quot;${y * cellSize}px&amp;quot;
+cell.style.border = &amp;quot;1px solid #777&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;which removes a lot of repetitive and unnecessary stuff to read. Plus, it helps to group like things together; your eyes can see an
+&lt;code&gt;.apply&lt;/code&gt; block, and think &amp;ldquo;this is where all modifications to that value are happening&amp;rdquo;.&lt;/p&gt;
+
+&lt;p&gt;We also do a bit of positioning using the &lt;code&gt;cellSize&lt;/code&gt; variable (which is just hard-coded to be 25 pixels), and add a border of dark
+grey. The last thing we do is append our newly-created and newly-styled div to the grid container that we&amp;rsquo;ve just added to our
+&lt;code&gt;Grid&lt;/code&gt; constructor, so our cells will actually appear on the page.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s run &lt;code&gt;./gradlew build&lt;/code&gt;, refresh our web browser and &lt;em&gt;check out&lt;/em&gt; what we&amp;rsquo;ve got!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;img/snake-grid.png&#34; alt=&#34;Behold, the Glorious Grid!&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Yes, it&amp;rsquo;s an 11x11 grid, even though our &lt;code&gt;main&lt;/code&gt; function in &lt;code&gt;Main.kt&lt;/code&gt; passes in a width and height of 10 when creating the &lt;code&gt;Grid&lt;/code&gt;.
+It&amp;rsquo;s not super important, but we may as well fix it. In the &lt;code&gt;buildGrid&lt;/code&gt; function in &lt;code&gt;Grid&lt;/code&gt;, instead of mapping over the ranges
+&lt;code&gt;(0..width)&lt;/code&gt; and &lt;code&gt;(0..height)&lt;/code&gt;, it should be &lt;code&gt;(0..width - 1)&lt;/code&gt; and &lt;code&gt;(0..height - 1)&lt;/code&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;That about wraps up the basics of the grid, though. There&amp;rsquo;s one other thing that we need the grid to be able to do, and that&amp;rsquo;s display
+a filled-in square vs a white square when the cell&amp;rsquo;s &lt;code&gt;filled&lt;/code&gt; property is &lt;code&gt;true&lt;/code&gt;. But, since nothing can set cells to be filled in yet,
+we&amp;rsquo;re going to wait.&lt;/p&gt;
+
+&lt;p&gt;Instead, let&amp;rsquo;s lay out the basics of the &lt;code&gt;Game&lt;/code&gt; and the game loop.&lt;/p&gt;
+
+&lt;h1 id=&#34;the-game&#34;&gt;The Game&lt;/h1&gt;
+
+&lt;p&gt;In the same package as the &lt;code&gt;Grid&lt;/code&gt;, create a &lt;code&gt;Game&lt;/code&gt; class, which will be empty for now except for two functions: &lt;code&gt;start&lt;/code&gt; and &lt;code&gt;stop&lt;/code&gt;, two
+commonly occurring actions in a game. We&amp;rsquo;ll fill those in next.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;package co.kenrg.snake
+
+class Game {
+    fun start() {
+
+    }
+
+    fun stop() {
+
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I will not claim to be an expert in writing games, but the absolute basics involve a &amp;ldquo;game loop&amp;rdquo; - an infinite loop which runs every few
+milliseconds (however many times is necessary in order to achieve the desired frames per second, or FPS), and updates the state of the
+game on each loop. In Javascript, this kind of thing can be done using the &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/timers#setInterval(callback_ms)&#34;&gt;setInterval&lt;/a&gt;
+function available globally on &lt;code&gt;window&lt;/code&gt;. This allows us to specify a block of code that will be continually run, and the interval at
+which it will repeat.&lt;/p&gt;
+
+&lt;p&gt;Obviously we don&amp;rsquo;t want to dispatch this function forever with no way of stopping it (aside from the user closing their browser tab
+maybe, which isn&amp;rsquo;t a good solution), so the &lt;code&gt;window.setInterval&lt;/code&gt; function returns an integer. This number corresponds to some identifier
+within the Javascript runtime, which isn&amp;rsquo;t especially useful to us, but we can pass it to
+&lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/timers#clearInterval(ID)&#34;&gt;clearInterval&lt;/a&gt; (another function available
+on &lt;code&gt;window&lt;/code&gt;), which will stop our loop.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;class Game {
+    private var intervalLoopId: Int? = null
+    private val framesPerSecond = 15
+
+    fun update() {
+        // Perform some logic here
+    }
+
+    fun start() {
+        intervalLoopId = window.setInterval({
+            this.update()
+        }, 1000 / framesPerSecond)
+    }
+
+    fun stop() {
+        if (intervalLoopId != null)
+            window.clearInterval(intervalLoopId!!)
+        intervalLoopId = null
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We won&amp;rsquo;t have any updating logic for now (we&amp;rsquo;ll get to that in a future post, once we start adding things that move, like the snake!)
+but we &lt;em&gt;do&lt;/em&gt; want the &lt;code&gt;Game&lt;/code&gt; class to basically act as the puppeteer for the whole game application. That way, to our &lt;code&gt;Main.kt&lt;/code&gt; class,
+the API into our game (right now just starting and stopping it) is very well-defined. So, let&amp;rsquo;s add the creation of our &lt;code&gt;Grid&lt;/code&gt; instance
+within the instantiation of the &lt;code&gt;Game&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;p&gt;This means that our &lt;code&gt;Game&lt;/code&gt; class now needs to provide the &lt;code&gt;gridContainer&lt;/code&gt; DOM node to our &lt;code&gt;Grid&lt;/code&gt;. Rather than the &lt;code&gt;Game&lt;/code&gt; class reaching
+into the DOM tree we create in &lt;code&gt;Main.kt&lt;/code&gt;, let&amp;rsquo;s accept it as a parameter to the &lt;code&gt;Game&lt;/code&gt; constructor. Our &lt;code&gt;Game&lt;/code&gt; constructor should now
+look like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;class Game(val gridNode: Node?) {
+  ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and our &lt;code&gt;main&lt;/code&gt; function within &lt;code&gt;Main.kt&lt;/code&gt; should look like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-kotlin&#34;&gt;fun main(args: Array&amp;lt;String&amp;gt;) {
+    var gridContainer: Node? = null
+
+    document.body?.append {
+        h1 { +&amp;quot;🐍 Snake&amp;quot; }
+        gridContainer = div { style = &amp;quot;position: relative&amp;quot; }
+    }
+
+    val game = Game(gridContainer)
+    game.start()
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Calling &lt;code&gt;game.start()&lt;/code&gt; won&amp;rsquo;t do anything right now, since nothing happens within the &lt;code&gt;update&lt;/code&gt; function in &lt;code&gt;Game&lt;/code&gt;, but let&amp;rsquo;s do it
+anyway. Also, it&amp;rsquo;s important again to note the well-defined API of the &lt;code&gt;Game&lt;/code&gt; class. Since we created the &lt;code&gt;gridContainer&lt;/code&gt; in the
+&lt;code&gt;Main.kt&lt;/code&gt; file, it makes sense that we pass it into the &lt;code&gt;Game&lt;/code&gt; class, since it&amp;rsquo;s a dependency of that class. The alternative would be
+to do something resembling the jQuery days, wherein we assign an id to the &lt;code&gt;gridContainer&lt;/code&gt;&amp;rsquo;s div, and then get a handle on it within
+the &lt;code&gt;Game&lt;/code&gt; class. If that last bit felt wrong, that&amp;rsquo;s because it should! Passing the &lt;code&gt;gridContainer&lt;/code&gt; into the &lt;code&gt;Game&lt;/code&gt; class means that,
+from this point on, we don&amp;rsquo;t need to care about it with respect to the DOM. If we remove it, change its position, or rename it, the
+core logic of the &lt;code&gt;Game&lt;/code&gt; remains the same.&lt;/p&gt;
+
+&lt;p&gt;This may be a contrived example since everything is so simple, but this method of providing a class with all of its dependencies is a
+model that&amp;rsquo;s far easier to understand than giving the &lt;code&gt;Game&lt;/code&gt; arcane knowledge of the HTML page defined pretty far away from it. And
+who knows what other classes might require access to it in the future.&lt;/p&gt;
+
+&lt;p&gt;Tangent aside, if we now build and run our app (using &lt;code&gt;./gradlew build&lt;/code&gt; and &lt;code&gt;python -m SimpleHTTPServer&lt;/code&gt;, in case you forgot), we
+should see nothing different, but this is exactly what we want!&lt;/p&gt;
+
+&lt;h2 id=&#34;to-be-continued&#34;&gt;To be continued&amp;hellip;&lt;/h2&gt;
+
+&lt;p&gt;We now have our grid drawn, and the basic setup for our game and game loop. I think this is a good stopping point for this time around.
+Next time, we&amp;rsquo;ll work on filling in grid cells, and creating and placing food in the grid.&lt;/p&gt;
+
+&lt;p&gt;As with last time, the code in this article is available on my github, and the end result will be accessible at the
+&lt;a href=&#34;https://github.com/kengorab/kotlin-js-snake/tree/step-1&#34;&gt;step-1 tag&lt;/a&gt;. Stay tuned for Part 2!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Writing Snake in Javascript with Kotlin: Part 0</title>
