@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Min Triangle Sum (Coding Challenge) &middot; Ken Gorab</title>
+
+  
+  <link rel="stylesheet" href="http://kenrg.co/css/poole.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/hyde.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/hyde-x.css">
+  <link rel="stylesheet" href="http://kenrg.co/css/highlight/darcula.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Josefin+Sans">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+
+  
+  <link rel="apple-touch-icon" sizes="57x57" href="http://kenrg.co/favicons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="http://kenrg.co/favicons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="http://kenrg.co/favicons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="http://kenrg.co/favicons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="http://kenrg.co/favicons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="http://kenrg.co/favicons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="http://kenrg.co/favicons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="http://kenrg.co/favicons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://kenrg.co/favicons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="http://kenrg.co/favicons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://kenrg.co/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="http://kenrg.co/favicons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://kenrg.co/favicons/favicon-16x16.png">
+  <link rel="manifest" href="http://kenrg.co/favicons/manifest.json">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="javascript,kotlin,java,functional programming,language comparison,interview questions,coding challenge">
+  
+  <script>
+        (function(i,s,o,g,r,a,m){if(window.location.hostname==='localhost')return;i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-96470347-1', 'auto');
+        ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1 class="sidebar-author-name">Ken Gorab</h1>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://kenrg.co/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://kenrg.co/about/">About Me</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://kenrg.co/projects/">Projects</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/kengorab"><i class="fa fa-github-square"></i> Github</a><br/>
+      <a href="https://www.linkedin.com/in/kenneth-gorab-08862646"><i class="fa fa-linkedin-square"></i> LinkedIn</a>
+      </li>
+    </ul>
+
+    <p>
+    Copyright &copy; 2017 Ken Gorab<br/>
+    <small>Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></small>
+    </p>
+  </div>
+</div>
+
+<div class="sidebar collapseable">
+  <div class="sidebar-about">
+    <h1 class="sidebar-author-name">Ken Gorab</h1>
+  </div>
+  <div class="sidebar-links">
+    <a href="http://kenrg.co/">Blog</a>
+    
+    <a href="http://kenrg.co/about/">About Me</a>
+    
+    <a href="http://kenrg.co/projects/">Projects</a>
+    
+    <div class="vertical-line"></div>
+    <a href="https://github.com/kengorab"><i class="fa fa-github-square"></i></a>
+    <a href="https://www.linkedin.com/in/kenneth-gorab-08862646"><i class="fa fa-linkedin-square"></i></a>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">Min Triangle Sum (Coding Challenge)</h1>
+    <span class="post-date">Oct 7, 2017 &middot; <a href="http://kenrg.co/article/min-triangle-sum-coding-challenge-0/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://kenrg.co/categories/coding-challenge">coding challenge</a><a class="label" href="http://kenrg.co/categories/javascript">javascript</a><a class="label" href="http://kenrg.co/categories/kotlin">kotlin</a><a class="label" href="http://kenrg.co/categories/java">java</a>
+    </span>
+    
+
+<h1 id="preamble-motivation">Preamble / Motivation</h1>
+
+<p>Recently, in between working on various projects and other hobbies, I&rsquo;ve been doing programming &ldquo;brainteaser&rdquo; problems,
+like testing to see if a binary tree is a mirror image of itself. You know, the types of questions you get asked during
+a SWE interview which don&rsquo;t really prove that you can design and write scalable, well-architected software, but rather
+allow the interviewer to get a glimpse of your thought process, and to see which data structures and strategies you
+immediately reach for.</p>
+
+<p>The types of questions that, if you&rsquo;re not ready for them, can really make you look bad.</p>
+
+<p>Or, looking at it in a different way, are actually a lot of <em>fun</em> to do when the pressure is off. When you&rsquo;re not in the
+hot seat with someone staring over your shoulder, they feel more like Sudoku or crossword puzzles rather than a test. I
+encourage anyone who&rsquo;s intimidated by these types of problems to sit down and try to do a couple each day. I&rsquo;m not promising
+that you&rsquo;ll find the joy in it that I&rsquo;ve found, but if you do, and you head into your next interview looking forward to
+the problem rather than dreading it, I&rsquo;ll bet you&rsquo;ll do better. Not only will the interviewer pick up on your enthusiasm,
+but you&rsquo;ll probably be less nervous and instead be more excited.</p>
+
+<p>Anyway, onto the problem of the day.</p>
+
+<h1 id="the-problem-of-the-day">The Problem of the Day</h1>
+
+<p>Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.</p>
+
+<p>For example, given the following triangle</p>
+
+<pre><code>                    2 
+                    
+                  3   4
+                  
+                6   5   7
+                
+              4   1   8   3
+</code></pre>
+
+<p>The minimum path sum from top to bottom is 11 (<code>2 + 3 + 5 + 1 = 11</code>).</p>
+
+<p><em>Note: Bonus points if you are able to do this using only O(n) extra space, where n is the total number of rows in the triangle.</em></p>
+
+<hr />
+
+<p>This problem came from a site called <a href="https://www.programcreek.com/2013/01/leetcode-triangle-java/">ProgramCreek</a>, which
+has a <a href="https://www.programcreek.com/2012/11/top-10-algorithms-for-coding-interview/">ton of these types of problems</a>, split
+out by categories of data structures used to solve it. I&rsquo;d definitely recommend checking it out.</p>
+
+<p>Before reading further, you should take a couple of minutes to think through how you&rsquo;d solve this problem.</p>
+
+<h2 id="thinking-through-it">Thinking Through It</h2>
+
+<p>The naïve way of doing this would be to start from the top and form all of the possible sums, then find the minimum
+at the end. So, the possibilities would be</p>
+
+<ul>
+<li><code>2 3 6 4</code> (<code>15</code>)</li>
+<li><code>2 3 6 1</code> (<code>12</code>)</li>
+<li><code>2 3 5 1</code> (<code>11</code>)</li>
+<li><code>2 3 5 8</code> (<code>18</code>)</li>
+<li><code>2 4 5 1</code> (<code>12</code>)</li>
+<li><code>2 4 5 8</code> (<code>19</code>)</li>
+<li><code>2 4 7 8</code> (<code>21</code>)</li>
+<li><code>2 4 7 3</code> (<code>16</code>)</li>
+</ul>
+
+<p>and the solution would be <code>2 3 5 1</code>. This may seem fine for such a small triangle, but each additional row that gets added
+will produce twice as many possibilities, and eventually you notice its inefficiency (this has an exponential runtime
+complexity, of <code>O(2^(n - 1))</code>). As interviewers are wont to do, they&rsquo;ll try to get you to think about this after you&rsquo;ve
+finished, and ask you something along the lines of &ldquo;okay, but what happens when we run this with a triangle that has
+10,000,000 rows?&ldquo;.</p>
+
+<p>Well, 10,000,000 isn&rsquo;t an exact <a href="https://en.wikipedia.org/wiki/Triangular_number">Triangular Number</a>,
+but let&rsquo;s do some rounding. (<code>10,000,000 = (n)(n + 1) / 2</code> yields approximately 4,472 rows in this triangle). That means
+that, in order to determine which path results in the minimum sum, we&rsquo;d need to make <code>2^4471</code> calculations (which is a
+number several orders of magnitude larger than the total number of particles in the universe).</p>
+
+<p>Let&rsquo;s try a different approach. Rather than starting at the top and working our way down, let&rsquo;s start at the bottom and
+work our way up.</p>
+
+<p>Let&rsquo;s start by allocating a new array, which consists of the elements of the last row. This is well within the rules of
+the &ldquo;bonus points&rdquo;, so let&rsquo;s create <code>[4, 1, 8, 3]</code>. This array will represent the best (minimum) possible sum after each
+iteration of the algorithm. Starting from the second-to-last row in the triangle, we compare the sums of each element and
+the two adjacent numbers in the lower row.</p>
+
+<p>For example, starting at the <code>6</code>, we could either sum it with the <code>4</code> or the <code>1</code>; we&rsquo;d pick the <code>1</code> since it results
+in the minimal value. We&rsquo;d then do the same for the <code>5</code> and the <code>7</code> in that row. So, after one iteration of our algorithm,
+comparing sums and updating the array, we&rsquo;re left with the array <code>[7, 6, 10, 3]</code> (each round will update 1 item fewer in
+the array each time, which is why the 3) is left over from the start.</p>
+
+<p>Running the algorithm again, we are comparing <code>7 + 3</code> with <code>6 + 3</code>, so we take <code>9</code> and place that in the first element of
+the array; then we compare <code>6 + 4</code> with <code>10 + 4</code>, so we take <code>10</code> and place it in the second position in the array. Now,
+the array looks like <code>[9, 10, 10, 3]</code>. Note again that the <code>10</code> and <code>3</code> are left over from last time. We <em>could</em> alter
+the algorithm to replace these with <code>null</code> or something to make it less confusing, but just know that we only care about
+the first <code>n</code> elements of the array, where <code>n</code> is the row in the triangle we&rsquo;re currently processing.</p>
+
+<p>The final run of the algorithm is comparing <code>9 + 2</code> with <code>10 + 2</code>, so we take <code>11</code> and put it in the first place in the
+array. Now that we&rsquo;ve run out of rows in the triangle, the 0th element of the array is our solution, and if we trace back
+the values we had summed along the way to arrive at this value, we see it&rsquo;s <code>2 + 3 + 5 + 1</code>.</p>
+
+<p>This algorithm will iterate over the number of rows in the triangle, and in each row iterate over the number of elements.
+Therefore, its runtime complexity is <code>O(n^2)</code>, which is nothing compared to the exponential runtime in the naïve approach.</p>
+
+<h2 id="implementation-javascript">Implementation (Javascript)</h2>
+
+<p>Now that we&rsquo;ve talked through the solution at a high level, let&rsquo;s see what this looks like in code. I&rsquo;m going to write
+this solution in a few languages, just for some variety. If you&rsquo;re a functional programmer, you were reading the second
+approach and thinking &ldquo;wow, this sounds like <code>reduce</code> (AKA <code>foldl</code>)&rdquo; then you&rsquo;re ahead of the game! I&rsquo;ll be using <code>reduce</code>
+in my javascript solution.</p>
+
+<pre><code class="language-js">function minTriangleSum(triangleRows) {
+  const triangle = triangleRows.reverse();
+  const [lastRow, ...rows] = triangle;
+  const results = rows.reduce(
+    (acc, row) =&gt; {
+      return row.map((item, index) =&gt; {
+        return item + Math.min(acc[index], acc[index + 1]);
+      });
+    },
+    lastRow
+  );
+  return results[0];
+}
+
+const triangle = [
+     [2],
+    [3, 4],
+   [6, 5, 7],
+  [4, 1, 8, 3]
+];
+
+console.log(minTriangleSum(triangle));  // 11
+
+</code></pre>
+
+<p>Now <em>technically</em> this solution does allocate more space than a single <code>O(n)</code> array, but I wanted to talk about the
+functional, declarative solution first, since it&rsquo;s a more direct translation of how I like to think about these problems.
+Note also that each iteration of the reduction also returns an array with the correct number of elements in it (when I
+walked through the solution conceptually a moment ago, I had mentioned that the resulting array would contain extra elements
+carried over from previous iterations).</p>
+
+<p>Let&rsquo;s see what an imperative solution looks like, which doesn&rsquo;t allocate anything other than the <code>O(n)</code> requirement for
+the bonus points:</p>
+
+<pre><code class="language-js">function minTriangleSum(triangleRows) {
+  let totals = [];
+  const lastRow = triangleRows[triangleRows.length - 1];
+  for (let i = 0; i &lt; lastRow.length; i++) {
+    totals.push(lastRow[i]);
+  }
+  
+  // The block above could be replaced with:
+  //   let totals = [...triangleRows[triangleRows.length - 1]];
+
+  // Iterate in reverse
+  for (let i = triangleRows.length - 2; i &gt;= 0; i--) {
+    const row = triangleRows[i];
+    for (let j = 0; j &lt; row.length; j++) {
+      totals[j] = row[j] + Math.min(totals[j], totals[j + 1]);
+    }
+  }
+  return totals[0];
+}
+
+const triangle = [
+     [2],
+    [3, 4],
+   [6, 5, 7],
+  [4, 1, 8, 3]
+];
+
+console.log(minTriangleSum(triangle));
+
+</code></pre>
+
+<p>This reads more like the javascript of yore, without making use of the <code>reduce</code> or <code>map</code> functions. As I mentioned in
+the comment in the code, the first block could have been replaced with a single line but I felt that, if I was going
+to be using <code>for</code>-loops anyway, I may as well go ahead and not take advantage of <em>any</em> of the features of modern
+javascript.</p>
+
+<h2 id="implementation-java">Implementation (Java)</h2>
+
+<p>The imperative java implementation isn&rsquo;t terribly different from the javascript one:</p>
+
+<pre><code class="language-java">int minPathSum(int[][] triangleRows) {
+    int numRows = triangleRows.length;
+    int[] totals = new int[numRows];
+    System.arraycopy(triangleRows[numRows - 1], 0, totals, 0, triangleRows[numRows - 1].length);
+
+    // Iterate in reverse
+    for (int i = triangleRows.length - 2; i &gt;= 0; i--) {
+        int[] upperRow = triangleRows[i];
+        for (int j = 0; j &lt; upperRow.length; j++) {
+            totals[j] = upperRow[j] + Math.min(totals[j], totals[j + 1]);
+        }
+    }
+
+    return totals[0];
+}
+</code></pre>
+
+<p>The call to <code>System.arraycopy</code> is a <a href="https://stackoverflow.com/a/18639042">more performant</a> (albeit slightly more
+obfuscated) way to copy arrays in java rather than using a <code>for</code>-loop, since it&rsquo;s a call into native VM code, which copies
+blocks of memory rather than copying single array elements one at a time.</p>
+
+<p>Trying to write the more declarative solution in java, using <code>Streams</code>, I got annoyed. See, while the java language
+developers made a good effort to bring some aspects of functional/declarative programming to java in Java 8, there is
+no <code>mapIndexed</code> method on a <code>Stream</code>, so in order to write the same algorithm, you&rsquo;d need to have a <code>for</code>-loop within
+the <code>reduce</code> function, which is hideous. In Kotlin for example, a language with an incredibly robust collections API,
+the <code>mapIndexed</code> function exists. Also, there&rsquo;s a <code>foldRight</code> function as well, which saves us from first having to
+reverse the rows manually. Seriously, the Kotlin language developers aren&rsquo;t slouches, take a look at the
+<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/index.html">documentation for their collections APIs</a>
+and imagine how much of an improvement it is over java&rsquo;s.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>So that&rsquo;s it! There&rsquo;s nothing spectacular or particularly groundbreaking in this post, I just wanted to talk for a bit
+about coding challenges / SWE interview questions, and why they&rsquo;re important. And more importantly, why they should be
+viewed as a fun challenge rather than a test or a chore.</p>
+
+<p>I definitely recommend checking out the problems on
+<a href="https://www.programcreek.com/2012/11/top-10-algorithms-for-coding-interview/">ProgramCreek</a> (which I had linked above
+earlier on), and try to do one or two of them a day. They&rsquo;re important to do, even if you&rsquo;re not thinking of changing
+jobs anytime soon.</p>
+
+<p>If you have any questions/comments, please feel free to leave them below. Thanks for reading!</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "kenrg-blog";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "kenrg-blog";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://kenrg.co/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
