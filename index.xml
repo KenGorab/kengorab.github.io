@@ -6,8 +6,241 @@
     <description>Recent content on Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 10 Apr 2017 20:58:30 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 07 Oct 2017 21:09:45 -0400</lastBuildDate>
     <atom:link href="http://kenrg.co/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Min Triangle Sum (Coding Challenge)</title>
+      <link>http://kenrg.co/article/min-triangle-sum-coding-challenge-0/</link>
+      <pubDate>Sat, 07 Oct 2017 21:09:45 -0400</pubDate>
+      
+      <guid>http://kenrg.co/article/min-triangle-sum-coding-challenge-0/</guid>
+      <description>
+
+&lt;h1 id=&#34;preamble-motivation&#34;&gt;Preamble / Motivation&lt;/h1&gt;
+
+&lt;p&gt;Recently, in between working on various projects and other hobbies, I&amp;rsquo;ve been doing programming &amp;ldquo;brainteaser&amp;rdquo; problems,
+like testing to see if a binary tree is a mirror image of itself. You know, the types of questions you get asked during
+a SWE interview which don&amp;rsquo;t really prove that you can design and write scalable, well-architected software, but rather
+allow the interviewer to get a glimpse of your thought process, and to see which data structures and strategies you
+immediately reach for.&lt;/p&gt;
+
+&lt;p&gt;The types of questions that, if you&amp;rsquo;re not ready for them, can really make you look bad.&lt;/p&gt;
+
+&lt;p&gt;Or, looking at it in a different way, are actually a lot of &lt;em&gt;fun&lt;/em&gt; to do when the pressure is off. When you&amp;rsquo;re not in the
+hot seat with someone staring over your shoulder, they feel more like Sudoku or crossword puzzles rather than a test. I
+encourage anyone who&amp;rsquo;s intimidated by these types of problems to sit down and try to do a couple each day. I&amp;rsquo;m not promising
+that you&amp;rsquo;ll find the joy in it that I&amp;rsquo;ve found, but if you do, and you head into your next interview looking forward to
+the problem rather than dreading it, I&amp;rsquo;ll bet you&amp;rsquo;ll do better. Not only will the interviewer pick up on your enthusiasm,
+but you&amp;rsquo;ll probably be less nervous and instead be more excited.&lt;/p&gt;
+
+&lt;p&gt;Anyway, onto the problem of the day.&lt;/p&gt;
+
+&lt;h1 id=&#34;the-problem-of-the-day&#34;&gt;The Problem of the Day&lt;/h1&gt;
+
+&lt;p&gt;Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.&lt;/p&gt;
+
+&lt;p&gt;For example, given the following triangle&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;                    2 
+                    
+                  3   4
+                  
+                6   5   7
+                
+              4   1   8   3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The minimum path sum from top to bottom is 11 (&lt;code&gt;2 + 3 + 5 + 1 = 11&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note: Bonus points if you are able to do this using only O(n) extra space, where n is the total number of rows in the triangle.&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;This problem came from a site called &lt;a href=&#34;https://www.programcreek.com/2013/01/leetcode-triangle-java/&#34;&gt;ProgramCreek&lt;/a&gt;, which
+has a &lt;a href=&#34;https://www.programcreek.com/2012/11/top-10-algorithms-for-coding-interview/&#34;&gt;ton of these types of problems&lt;/a&gt;, split
+out by categories of data structures used to solve it. I&amp;rsquo;d definitely recommend checking it out.&lt;/p&gt;
+
+&lt;p&gt;Before reading further, you should take a couple of minutes to think through how you&amp;rsquo;d solve this problem.&lt;/p&gt;
+
+&lt;h2 id=&#34;thinking-through-it&#34;&gt;Thinking Through It&lt;/h2&gt;
+
+&lt;p&gt;The naïve way of doing this would be to start from the top and form all of the possible sums, then find the minimum
+at the end. So, the possibilities would be&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;2 3 6 4&lt;/code&gt; (&lt;code&gt;15&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;2 3 6 1&lt;/code&gt; (&lt;code&gt;12&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;2 3 5 1&lt;/code&gt; (&lt;code&gt;11&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;2 3 5 8&lt;/code&gt; (&lt;code&gt;18&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;2 4 5 1&lt;/code&gt; (&lt;code&gt;12&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;2 4 5 8&lt;/code&gt; (&lt;code&gt;19&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;2 4 7 8&lt;/code&gt; (&lt;code&gt;21&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;2 4 7 3&lt;/code&gt; (&lt;code&gt;16&lt;/code&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;and the solution would be &lt;code&gt;2 3 5 1&lt;/code&gt;. This may seem fine for such a small triangle, but each additional row that gets added
+will produce twice as many possibilities, and eventually you notice its inefficiency (this has an exponential runtime
+complexity, of &lt;code&gt;O(2^(n - 1))&lt;/code&gt;). As interviewers are wont to do, they&amp;rsquo;ll try to get you to think about this after you&amp;rsquo;ve
+finished, and ask you something along the lines of &amp;ldquo;okay, but what happens when we run this with a triangle that has
+10,000,000 rows?&amp;ldquo;.&lt;/p&gt;
+
+&lt;p&gt;Well, 10,000,000 isn&amp;rsquo;t an exact &lt;a href=&#34;https://en.wikipedia.org/wiki/Triangular_number&#34;&gt;Triangular Number&lt;/a&gt;,
+but let&amp;rsquo;s do some rounding. (&lt;code&gt;10,000,000 = (n)(n + 1) / 2&lt;/code&gt; yields approximately 4,472 rows in this triangle). That means
+that, in order to determine which path results in the minimum sum, we&amp;rsquo;d need to make &lt;code&gt;2^4471&lt;/code&gt; calculations (which is a
+number several orders of magnitude larger than the total number of particles in the universe).&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s try a different approach. Rather than starting at the top and working our way down, let&amp;rsquo;s start at the bottom and
+work our way up.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start by allocating a new array, which consists of the elements of the last row. This is well within the rules of
+the &amp;ldquo;bonus points&amp;rdquo;, so let&amp;rsquo;s create &lt;code&gt;[4, 1, 8, 3]&lt;/code&gt;. This array will represent the best (minimum) possible sum after each
+iteration of the algorithm. Starting from the second-to-last row in the triangle, we compare the sums of each element and
+the two adjacent numbers in the lower row.&lt;/p&gt;
+
+&lt;p&gt;For example, starting at the &lt;code&gt;6&lt;/code&gt;, we could either sum it with the &lt;code&gt;4&lt;/code&gt; or the &lt;code&gt;1&lt;/code&gt;; we&amp;rsquo;d pick the &lt;code&gt;1&lt;/code&gt; since it results
+in the minimal value. We&amp;rsquo;d then do the same for the &lt;code&gt;5&lt;/code&gt; and the &lt;code&gt;7&lt;/code&gt; in that row. So, after one iteration of our algorithm,
+comparing sums and updating the array, we&amp;rsquo;re left with the array &lt;code&gt;[7, 6, 10, 3]&lt;/code&gt; (each round will update 1 item fewer in
+the array each time, which is why the 3) is left over from the start.&lt;/p&gt;
+
+&lt;p&gt;Running the algorithm again, we are comparing &lt;code&gt;7 + 3&lt;/code&gt; with &lt;code&gt;6 + 3&lt;/code&gt;, so we take &lt;code&gt;9&lt;/code&gt; and place that in the first element of
+the array; then we compare &lt;code&gt;6 + 4&lt;/code&gt; with &lt;code&gt;10 + 4&lt;/code&gt;, so we take &lt;code&gt;10&lt;/code&gt; and place it in the second position in the array. Now,
+the array looks like &lt;code&gt;[9, 10, 10, 3]&lt;/code&gt;. Note again that the &lt;code&gt;10&lt;/code&gt; and &lt;code&gt;3&lt;/code&gt; are left over from last time. We &lt;em&gt;could&lt;/em&gt; alter
+the algorithm to replace these with &lt;code&gt;null&lt;/code&gt; or something to make it less confusing, but just know that we only care about
+the first &lt;code&gt;n&lt;/code&gt; elements of the array, where &lt;code&gt;n&lt;/code&gt; is the row in the triangle we&amp;rsquo;re currently processing.&lt;/p&gt;
+
+&lt;p&gt;The final run of the algorithm is comparing &lt;code&gt;9 + 2&lt;/code&gt; with &lt;code&gt;10 + 2&lt;/code&gt;, so we take &lt;code&gt;11&lt;/code&gt; and put it in the first place in the
+array. Now that we&amp;rsquo;ve run out of rows in the triangle, the 0th element of the array is our solution, and if we trace back
+the values we had summed along the way to arrive at this value, we see it&amp;rsquo;s &lt;code&gt;2 + 3 + 5 + 1&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This algorithm will iterate over the number of rows in the triangle, and in each row iterate over the number of elements.
+Therefore, its runtime complexity is &lt;code&gt;O(n^2)&lt;/code&gt;, which is nothing compared to the exponential runtime in the naïve approach.&lt;/p&gt;
+
+&lt;h2 id=&#34;implementation-javascript&#34;&gt;Implementation (Javascript)&lt;/h2&gt;
+
+&lt;p&gt;Now that we&amp;rsquo;ve talked through the solution at a high level, let&amp;rsquo;s see what this looks like in code. I&amp;rsquo;m going to write
+this solution in a few languages, just for some variety. If you&amp;rsquo;re a functional programmer, you were reading the second
+approach and thinking &amp;ldquo;wow, this sounds like &lt;code&gt;reduce&lt;/code&gt; (AKA &lt;code&gt;foldl&lt;/code&gt;)&amp;rdquo; then you&amp;rsquo;re ahead of the game! I&amp;rsquo;ll be using &lt;code&gt;reduce&lt;/code&gt;
+in my javascript solution.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;function minTriangleSum(triangleRows) {
+  const triangle = triangleRows.reverse();
+  const [lastRow, ...rows] = triangle;
+  const results = rows.reduce(
+    (acc, row) =&amp;gt; {
+      return row.map((item, index) =&amp;gt; {
+        return item + Math.min(acc[index], acc[index + 1]);
+      });
+    },
+    lastRow
+  );
+  return results[0];
+}
+
+const triangle = [
+     [2],
+    [3, 4],
+   [6, 5, 7],
+  [4, 1, 8, 3]
+];
+
+console.log(minTriangleSum(triangle));  // 11
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now &lt;em&gt;technically&lt;/em&gt; this solution does allocate more space than a single &lt;code&gt;O(n)&lt;/code&gt; array, but I wanted to talk about the
+functional, declarative solution first, since it&amp;rsquo;s a more direct translation of how I like to think about these problems.
+Note also that each iteration of the reduction also returns an array with the correct number of elements in it (when I
+walked through the solution conceptually a moment ago, I had mentioned that the resulting array would contain extra elements
+carried over from previous iterations).&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see what an imperative solution looks like, which doesn&amp;rsquo;t allocate anything other than the &lt;code&gt;O(n)&lt;/code&gt; requirement for
+the bonus points:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;function minTriangleSum(triangleRows) {
+  let totals = [];
+  const lastRow = triangleRows[triangleRows.length - 1];
+  for (let i = 0; i &amp;lt; lastRow.length; i++) {
+    totals.push(lastRow[i]);
+  }
+  
+  // The block above could be replaced with:
+  //   let totals = [...triangleRows[triangleRows.length - 1]];
+
+  // Iterate in reverse
+  for (let i = triangleRows.length - 2; i &amp;gt;= 0; i--) {
+    const row = triangleRows[i];
+    for (let j = 0; j &amp;lt; row.length; j++) {
+      totals[j] = row[j] + Math.min(totals[j], totals[j + 1]);
+    }
+  }
+  return totals[0];
+}
+
+const triangle = [
+     [2],
+    [3, 4],
+   [6, 5, 7],
+  [4, 1, 8, 3]
+];
+
+console.log(minTriangleSum(triangle));
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This reads more like the javascript of yore, without making use of the &lt;code&gt;reduce&lt;/code&gt; or &lt;code&gt;map&lt;/code&gt; functions. As I mentioned in
+the comment in the code, the first block could have been replaced with a single line but I felt that, if I was going
+to be using &lt;code&gt;for&lt;/code&gt;-loops anyway, I may as well go ahead and not take advantage of &lt;em&gt;any&lt;/em&gt; of the features of modern
+javascript.&lt;/p&gt;
+
+&lt;h2 id=&#34;implementation-java&#34;&gt;Implementation (Java)&lt;/h2&gt;
+
+&lt;p&gt;The imperative java implementation isn&amp;rsquo;t terribly different from the javascript one:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;int minPathSum(int[][] triangleRows) {
+    int numRows = triangleRows.length;
+    int[] totals = new int[numRows];
+    System.arraycopy(triangleRows[numRows - 1], 0, totals, 0, triangleRows[numRows - 1].length);
+
+    // Iterate in reverse
+    for (int i = triangleRows.length - 2; i &amp;gt;= 0; i--) {
+        int[] upperRow = triangleRows[i];
+        for (int j = 0; j &amp;lt; upperRow.length; j++) {
+            totals[j] = upperRow[j] + Math.min(totals[j], totals[j + 1]);
+        }
+    }
+
+    return totals[0];
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The call to &lt;code&gt;System.arraycopy&lt;/code&gt; is a &lt;a href=&#34;https://stackoverflow.com/a/18639042&#34;&gt;more performant&lt;/a&gt; (albeit slightly more
+obfuscated) way to copy arrays in java rather than using a &lt;code&gt;for&lt;/code&gt;-loop, since it&amp;rsquo;s a call into native VM code, which copies
+blocks of memory rather than copying single array elements one at a time.&lt;/p&gt;
+
+&lt;p&gt;Trying to write the more declarative solution in java, using &lt;code&gt;Streams&lt;/code&gt;, I got annoyed. See, while the java language
+developers made a good effort to bring some aspects of functional/declarative programming to java in Java 8, there is
+no &lt;code&gt;mapIndexed&lt;/code&gt; method on a &lt;code&gt;Stream&lt;/code&gt;, so in order to write the same algorithm, you&amp;rsquo;d need to have a &lt;code&gt;for&lt;/code&gt;-loop within
+the &lt;code&gt;reduce&lt;/code&gt; function, which is hideous. In Kotlin for example, a language with an incredibly robust collections API,
+the &lt;code&gt;mapIndexed&lt;/code&gt; function exists. Also, there&amp;rsquo;s a &lt;code&gt;foldRight&lt;/code&gt; function as well, which saves us from first having to
+reverse the rows manually. Seriously, the Kotlin language developers aren&amp;rsquo;t slouches, take a look at the
+&lt;a href=&#34;https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/index.html&#34;&gt;documentation for their collections APIs&lt;/a&gt;
+and imagine how much of an improvement it is over java&amp;rsquo;s.&lt;/p&gt;
+
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;So that&amp;rsquo;s it! There&amp;rsquo;s nothing spectacular or particularly groundbreaking in this post, I just wanted to talk for a bit
+about coding challenges / SWE interview questions, and why they&amp;rsquo;re important. And more importantly, why they should be
+viewed as a fun challenge rather than a test or a chore.&lt;/p&gt;
+
+&lt;p&gt;I definitely recommend checking out the problems on
+&lt;a href=&#34;https://www.programcreek.com/2012/11/top-10-algorithms-for-coding-interview/&#34;&gt;ProgramCreek&lt;/a&gt; (which I had linked above
+earlier on), and try to do one or two of them a day. They&amp;rsquo;re important to do, even if you&amp;rsquo;re not thinking of changing
+jobs anytime soon.&lt;/p&gt;
+
+&lt;p&gt;If you have any questions/comments, please feel free to leave them below. Thanks for reading!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Writing Snake in Javascript with Kotlin: Part 1</title>
